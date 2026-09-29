@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-foam text-slate-ink font-sans antialiased;
+}
+
+/* Glassmorphism utilities */
+.glass-panel {
+  @apply bg-navy-50/80 backdrop-blur-md border border-slate-line/30 shadow-card;
+}
+
+/* Hairline scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #52525b; }
+::-webkit-scrollbar-track { background: transparent; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Route-line motif used behind KPI strips and section dividers */
+.route-rule {
+  background-image: repeating-linear-gradient(90deg, #27272a 0 6px, transparent 6px 12px);
+  height: 1px;
+}
+
+:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
