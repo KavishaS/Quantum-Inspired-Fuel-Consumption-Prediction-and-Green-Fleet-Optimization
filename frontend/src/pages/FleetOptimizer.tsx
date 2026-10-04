@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Compass, Play } from "lucide-react";
+import { Compass, Play, Lock, ShieldCheck } from "lucide-react";
 import {
   Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { useAsync } from "@/hooks/useAsync";
+import { useAuth } from "@/context/AuthContext";
 import { getRunStatus, listScenarios, optimize } from "@/services/api";
 import { ApiError } from "@/services/api";
 import type { Algorithm, OptimizeStatus } from "@/types/api";
@@ -22,6 +23,7 @@ const ALGOS: { key: Algorithm; label: string; note: string }[] = [
 ];
 
 export function FleetOptimizer() {
+  const { isAuditor } = useAuth();
   const { data: scenarioData } = useAsync(listScenarios);
   const [scenarioId, setScenarioId] = useState<number | null>(null);
   const [algorithm, setAlgorithm] = useState<Algorithm>("QGA");
@@ -44,7 +46,7 @@ export function FleetOptimizer() {
   useEffect(() => () => { if (pollRef.current) window.clearInterval(pollRef.current); }, []);
 
   const run = async () => {
-    if (scenarioId === null) return;
+    if (scenarioId === null || isAuditor) return;
     setStarting(true);
     setError(null);
     setStatus(null);
@@ -86,6 +88,22 @@ export function FleetOptimizer() {
         </p>
       </div>
 
+      {isAuditor && (
+        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-4 text-emerald-300">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 shrink-0">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="font-semibold text-sm">Auditor Mode (Read-Only Compliance)</div>
+              <div className="text-xs text-emerald-300/80">
+                Triggering new optimization runs is restricted for ESG Auditors. You have authority to review existing runs, inspect Pareto trade-offs, and audit compliance metrics. Switch to Fleet Director (Admin) or Quantum Analyst to run optimizations.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-5">
         <div className="glass-panel rounded-xl p-5 flex flex-col gap-4 h-fit">
           <Field label="Scenario">
@@ -123,8 +141,18 @@ export function FleetOptimizer() {
             <Input type="number" value={seed} onChange={(e) => setSeed(Number(e.target.value))} />
           </Field>
 
-          <Button onClick={run} disabled={running || scenarioId === null}>
-            <Play className="h-4 w-4" /> {running ? "Optimising…" : "Run Optimization"}
+          <Button onClick={run} disabled={running || scenarioId === null || isAuditor}>
+            {isAuditor ? (
+              <span className="flex items-center gap-2 text-emerald-300">
+                <Lock className="h-4 w-4 text-emerald-400" /> Optimization Locked (Auditor Role)
+              </span>
+            ) : running ? (
+              "Optimising…"
+            ) : (
+              <>
+                <Play className="h-4 w-4" /> Run Optimization
+              </>
+            )}
           </Button>
           {error && <p className="text-sm text-danger">{error}</p>}
         </div>

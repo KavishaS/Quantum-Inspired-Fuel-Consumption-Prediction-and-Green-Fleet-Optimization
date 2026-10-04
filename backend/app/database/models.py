@@ -24,12 +24,15 @@ def _now() -> dt.datetime:
 
 
 class User(Base):
-    """Present so authentication can be layered on later without a migration."""
+    """User account with role-based access control (admin, analyst, auditor)."""
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    email: Mapped[str] = mapped_column(String(128), default="")
     display_name: Mapped[str] = mapped_column(String(128), default="")
     role: Mapped[str] = mapped_column(String(32), default="analyst")
+    password_hash: Mapped[str] = mapped_column(String(256), default="")
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=_now)
 
 

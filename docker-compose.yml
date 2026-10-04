@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: greenfleet-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - SEED_ON_START=1
+      - LOG_LEVEL=INFO
+      - DATABASE_URL=sqlite:////app/data/greenfleet.db
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:5173,http://localhost:80,http://127.0.0.1:3000,http://127.0.0.1:5173
+      - AISSTREAM_API_KEY=${AISSTREAM_API_KEY:-}
+    volumes:
+      - greenfleet_data:/app/data
+      - greenfleet_models:/app/models
+      - greenfleet_reports:/app/reports
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: greenfleet-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  greenfleet_data:
+  greenfleet_models:
+  greenfleet_reports:

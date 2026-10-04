@@ -373,3 +373,51 @@ def test_map_route_prediction_validation(client):
     r = client.post("/api/map/predict", json={"cargo_demand_tonnes": -100})
     assert r.status_code == 400
 
+
+def test_telemetry_prediction_endpoint(client):
+    payload = {
+        "Ship_SpeedOverGround": 8.5,
+        "Consumer_Total_ShaftPower": 18500000.0,
+        "Weather_OceanCurrentVelocity": 0.25,
+        "Weather_WaveHeight": 1.5,
+        "Weather_WavePeriod": 5.5,
+        "Weather_Temperature2M": 22.0,
+        "Weather_SurfacePressure": 1013.25,
+        "Weather_WindSpeed10M": 6.0,
+        "Weather_WindWaveHeight": 0.5,
+        "Weather_SwellWaveHeight": 1.0,
+        "Weather_SwellWavePeriod": 6.0,
+        "Weather_WindGusts10M": 9.0,
+        "vessel_id": "Poseidon",
+        "distance_nm": 3600
+    }
+    r = client.post("/api/predict/telemetry", json=payload)
+    assert r.status_code == 200
+    d = r.json()
+    assert "predicted_momentary_fuel_kg_s" in d
+    assert d["predicted_momentary_fuel_kg_s"] > 0
+    assert d["predicted_fuel_rate_mt_per_day"] > 0
+    assert d["model_r2"] > 0.99
+    assert d["estimated_voyage_fuel_tonnes"] > 0
+
+
+def test_live_weather_endpoints(client):
+    # Test coordinates (Mumbai port)
+    r = client.get("/api/weather/live?lat=18.95&lon=72.95")
+    assert r.status_code == 200
+    d = r.json()
+    assert "wave_height_m" in d
+    assert "wind_speed_kn" in d
+    assert "temperature_c" in d
+    assert "sea_state" in d
+
+    # Test route weather profile (R01)
+    r2 = client.get("/api/weather/route/R01")
+    assert r2.status_code == 200
+    d2 = r2.json()
+    assert d2["route_code"] == "R01"
+    assert "summary" in d2
+    assert "avg_wave_height_m" in d2["summary"]
+
+
+

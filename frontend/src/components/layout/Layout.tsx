@@ -1,12 +1,15 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import {
   LayoutDashboard, Gauge, Compass, FlaskConical, GitBranch, BarChart3,
   ShieldCheck, Ship, FolderKanban, Info, Waves, CircleDot, MapPin,
+  Crown, Zap, ChevronDown
 } from "lucide-react";
 
 import { getHealth } from "@/services/api";
+import { useAuth } from "@/context/AuthContext";
+import { LoginModal } from "@/components/auth/LoginModal";
 
 const NAV = [
   { to: "/", label: "Executive Dashboard", icon: LayoutDashboard, end: true },
@@ -24,9 +27,13 @@ const NAV = [
 
 
 export function Layout() {
+  const location = useLocation();
+  const isLiveMap = location.pathname === "/live-map";
   const [status, setStatus] = useState<"checking" | "ok" | "down">("checking");
   const [datasetSeeded, setDatasetSeeded] = useState(false);
   const [modelReady, setModelReady] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const { isAuditor } = useAuth();
 
   useEffect(() => {
     let alive = true;
@@ -106,13 +113,35 @@ export function Layout() {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
-        <TopBar />
-        <main className="flex-1 overflow-y-auto bg-transparent relative z-0">
-          <div className="max-w-[1400px] mx-auto px-8 py-8 animate-fade-in-up">
-            <Outlet />
+        <TopBar onOpenLogin={() => setIsLoginOpen(true)} />
+        {isAuditor && (
+          <div className="bg-emerald-500/10 border-b border-emerald-500/30 px-8 py-2 text-xs text-emerald-300 flex items-center justify-between z-10 shrink-0">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
+              <span>
+                <strong>ESG Auditor View:</strong> You have read-only compliance verification authority.
+              </span>
+            </div>
+            <button
+              onClick={() => setIsLoginOpen(true)}
+              className="text-emerald-200 underline hover:text-white transition-colors"
+            >
+              Switch Role
+            </button>
           </div>
+        )}
+        <main className={clsx("flex-1 relative z-0", isLiveMap ? "overflow-hidden h-full p-0" : "overflow-y-auto bg-transparent")}>
+          {isLiveMap ? (
+            <Outlet />
+          ) : (
+            <div className="max-w-[1400px] mx-auto px-8 py-8 animate-fade-in-up">
+              <Outlet />
+            </div>
+          )}
         </main>
       </div>
+
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </div>
   );
 }
@@ -126,19 +155,46 @@ function StatusDot({ ok, pending }: { ok: boolean; pending: boolean }) {
   );
 }
 
-function TopBar() {
+function TopBar({ onOpenLogin }: { onOpenLogin: () => void }) {
+  const { user, role } = useAuth();
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+  const roleConfig = {
+    admin: { label: "Fleet Director", color: "from-purple-500 to-indigo-600", text: "text-purple-300", bg: "bg-purple-500/15 border-purple-500/30", Icon: Crown },
+    analyst: { label: "Quantum Analyst", color: "from-cyan-500 to-blue-600", text: "text-cyan-300", bg: "bg-cyan-500/15 border-cyan-500/30", Icon: Zap },
+    auditor: { label: "ESG Auditor", color: "from-emerald-500 to-teal-600", text: "text-emerald-300", bg: "bg-emerald-500/15 border-emerald-500/30", Icon: ShieldCheck },
+  }[role] || { label: "Analyst", color: "from-signal to-blue-600", text: "text-signal", bg: "bg-signal/15 border-signal/30", Icon: Zap };
+
+  const initials = user?.display_name
+    ? user.display_name.split(" ").map((w) => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase()
+    : "FA";
+
+  const RoleIcon = roleConfig.Icon;
+
   return (
     <header className="h-16 shrink-0 border-b border-slate-line/50 glass-panel flex items-center justify-between px-8 sticky top-0 z-10">
       <div className="text-[13px] font-medium text-slate-400">{today}</div>
       <div className="flex items-center gap-3">
-        <div className="text-right">
-          <div className="text-[13px] font-semibold text-slate-100">Fleet Analyst</div>
-          <div className="text-[11px] text-signal">Demo Account</div>
-        </div>
-        <div className="h-9 w-9 rounded-full bg-gradient-to-br from-signal to-blue-600 text-white flex items-center justify-center text-xs font-bold font-display shadow-glow">
-          FA
-        </div>
+        <button
+          onClick={onOpenLogin}
+          className="flex items-center gap-3 px-3 py-1.5 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all text-left group"
+          title="Click to switch role or view credentials"
+        >
+          <div className="text-right">
+            <div className="text-[13px] font-semibold text-slate-100 group-hover:text-signal transition-colors flex items-center gap-1.5 justify-end">
+              {user?.display_name || "Fleet Officer"}
+              <ChevronDown className="h-3 w-3 text-slate-400 group-hover:text-signal transition-colors" />
+            </div>
+            <div className="flex items-center justify-end gap-1.5 mt-0.5">
+              <span className={clsx("text-[10px] font-medium px-2 py-0.5 rounded-full border flex items-center gap-1", roleConfig.bg, roleConfig.text)}>
+                <RoleIcon className="h-2.5 w-2.5" /> {roleConfig.label}
+              </span>
+            </div>
+          </div>
+          <div className={clsx("h-9 w-9 rounded-full bg-gradient-to-br text-white flex items-center justify-center text-xs font-bold font-display shadow-glow", roleConfig.color)}>
+            {initials}
+          </div>
+        </button>
       </div>
     </header>
   );

@@ -30,7 +30,7 @@ from ..optimization.engine import pareto_front, solve
 from ..schemas.models import (
     BenchmarkRequest, ComplianceRequest, FuelSandboxRequest, OptimizeRequest,
     ParetoRequest, PredictionRequest, ReportRequest, ScenarioCreate,
-    ScenarioPayload, VesselCreate)
+    ScenarioPayload, TelemetryPredictionRequest, VesselCreate)
 from ..services import compliance as compliance_svc
 from ..services.dashboard import build_dashboard
 from ..services.domain import FUELS, VESSEL_CLASSES
@@ -39,6 +39,9 @@ from ..services.physics import compute_voyage
 from ..services.reporting import generate_report
 from ..services.scenarios import (
     current_fuel_prices, default_payload, problem_from_payload)
+from ..services.weather import (
+    fetch_live_marine_weather, fetch_route_weather_profile)
+from ..services.auth import require_roles_or_demo
 
 log = logging.getLogger("greenfleet.api")
 router = APIRouter(prefix="/api")
@@ -308,16 +311,46 @@ def predict_fuel(body: PredictionRequest, db: Session = Depends(get_db)) -> dict
     return out
 
 
+@router.post("/predict/telemetry", tags=["prediction"])
+def predict_telemetry(body: TelemetryPredictionRequest) -> dict:
+    """Predict instantaneous fuel burn (kg/s and MT/day) directly from high-frequency vessel telemetry."""
+    try:
+        rec = {
+            "Ship_SpeedOverGround": body.ship_speed_over_ground,
+            "Consumer_Total_ShaftPower": body.consumer_total_shaft_power,
+            "Weather_OceanCurrentVelocity": body.weather_ocean_current_velocity,
+            "Weather_WaveHeight": body.weather_wave_height,
+            "Weather_WavePeriod": body.weather_wave_period,
+            "Weather_Temperature2M": body.weather_temperature_2m,
+            "Weather_SurfacePressure": body.weather_surface_pressure,
+            "Weather_WindSpeed10M": body.weather_wind_speed_10m,
+            "Weather_WindWaveHeight": body.weather_wind_wave_height,
+            "Weather_SwellWaveHeight": body.weather_swell_wave_height,
+            "Weather_SwellWavePeriod": body.weather_swell_wave_period,
+            "Weather_WindGusts10M": body.weather_wind_gusts_10m,
+            "vessel_id": body.vessel_id or "Poseidon",
+            "distance_nm": body.distance_nm,
+        }
+        res = PREDICTOR.predict_telemetry(rec)
+        return res
+    except Exception as e:
+        log.exception("telemetry prediction failed")
+        raise HTTPException(503, f"Telemetry prediction error: {e}") from e
+
+
 @router.get("/model/performance", tags=["prediction"])
 def model_performance() -> dict:
     try:
         m = PREDICTOR.meta
     except Exception as e:
         raise HTTPException(503, "No trained model available.") from e
-    return {k: m[k] for k in
+    resp = {k: m[k] for k in
             ("best_model", "trained_at", "n_samples", "n_train", "n_test",
              "dataset_notice", "candidates", "metrics", "feature_importance", "diagnostics")
             if k in m}
+    if PREDICTOR.telemetry_meta:
+        resp["telemetry_model"] = PREDICTOR.telemetry_meta
+    return resp
 
 
 @router.post("/model/train", tags=["prediction"])
@@ -325,8 +358,30 @@ def retrain(n_samples: int = Query(6000, ge=500, le=40000)) -> dict:
     from ..ml.dataset import generate_voyages
     meta = train(df=generate_voyages(n=n_samples))
     PREDICTOR._pipe = None  # force reload
+    PREDICTOR._telemetry_pipe = None
     return {"best_model": meta["best_model"], "metrics": meta["metrics"],
-            "candidates": meta["candidates"], "n_samples": meta["n_samples"]}
+            "candidates": meta["candidates"], "n_samples": meta["n_samples"],
+            "telemetry_model_metrics": meta.get("telemetry_model_metrics")}
+
+
+# ------------------------------------------------------------- live weather
+
+@router.get("/weather/live", tags=["weather"])
+async def live_weather(
+    lat: float = Query(..., ge=-90, le=90, description="Latitude in decimal degrees"),
+    lon: float = Query(..., ge=-180, le=180, description="Longitude in decimal degrees")
+) -> dict:
+    """Fetch real-time marine weather and ocean wave spectra (wave height, period, swell, current, wind) at coordinates."""
+    return await fetch_live_marine_weather(lat, lon)
+
+
+@router.get("/weather/route/{route_code}", tags=["weather"])
+async def route_weather(route_code: str) -> dict:
+    """Fetch live environmental conditions and aggregate wave/wind along an entire shipping route."""
+    res = await fetch_route_weather_profile(route_code)
+    if "error" in res:
+        raise HTTPException(404, res["error"])
+    return res
 
 
 # ------------------------------------------------------------- optimisation
@@ -387,7 +442,7 @@ def _background_solve(run_id: int, payload: Dict[str, Any], req_data: Dict[str, 
         db.close()
 
 
-@router.post("/optimize", tags=["optimization"])
+@router.post("/optimize", tags=["optimization"], dependencies=[Depends(require_roles_or_demo("admin", "analyst"))])
 def optimize(body: OptimizeRequest, bg: BackgroundTasks, db: Session = Depends(get_db)) -> dict:
     problem, payload = _problem(db, body.scenario_id, body.scenario, body.weights)
 
@@ -579,7 +634,7 @@ def get_scenario(scenario_id: int, db: Session = Depends(get_db)) -> dict:
             "is_demo": s.is_demo, "payload": s.payload}
 
 
-@router.post("/scenarios", tags=["scenarios"], status_code=201)
+@router.post("/scenarios", tags=["scenarios"], status_code=201, dependencies=[Depends(require_roles_or_demo("admin", "analyst"))])
 def create_scenario(body: ScenarioCreate, db: Session = Depends(get_db)) -> dict:
     s = Scenario(name=body.name, description=body.description, tag=body.tag,
                  payload=json.loads(body.payload.model_dump_json()), is_demo=False)
@@ -588,7 +643,7 @@ def create_scenario(body: ScenarioCreate, db: Session = Depends(get_db)) -> dict
     return {"id": s.id, "name": s.name}
 
 
-@router.post("/scenarios/{scenario_id}/duplicate", tags=["scenarios"], status_code=201)
+@router.post("/scenarios/{scenario_id}/duplicate", tags=["scenarios"], status_code=201, dependencies=[Depends(require_roles_or_demo("admin", "analyst"))])
 def duplicate_scenario(scenario_id: int, db: Session = Depends(get_db)) -> dict:
     s = db.get(Scenario, scenario_id)
     if not s:
@@ -600,7 +655,7 @@ def duplicate_scenario(scenario_id: int, db: Session = Depends(get_db)) -> dict:
     return {"id": copy.id, "name": copy.name}
 
 
-@router.delete("/scenarios/{scenario_id}", tags=["scenarios"])
+@router.delete("/scenarios/{scenario_id}", tags=["scenarios"], dependencies=[Depends(require_roles_or_demo("admin"))])
 def delete_scenario(scenario_id: int, db: Session = Depends(get_db)) -> dict:
     s = db.get(Scenario, scenario_id)
     if not s:

@@ -1,0 +1,38 @@
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.pyc
+
+# Environment & Secrets (Never commit secrets)
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.local
+
+# Databases & Runtime State
+*.db
+*.db-journal
+*.sqlite3
+data/*.db
+data/*.db-journal
+data/greenfleet.db
+
+# Generated PDF Reports & logs
+reports/*.pdf
+*.log
+logs/
+
+# Frontend dependencies & build artifacts
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/tsconfig.tsbuildinfo
+.vite/

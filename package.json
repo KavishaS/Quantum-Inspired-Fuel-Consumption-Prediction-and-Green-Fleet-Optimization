@@ -1,0 +1,12 @@
+{
+  "name": "greenfleet-quantum",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "frontend": "npm --prefix frontend run dev",
+    "backend": "python -m uvicorn app.main:app --app-dir backend --reload --port 8000"
+  }
+}

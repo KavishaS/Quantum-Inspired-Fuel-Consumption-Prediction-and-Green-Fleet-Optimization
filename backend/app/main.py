@@ -26,6 +26,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from .api.routes import router
 from .api.ais_routes import router as ais_router
 from .api.map_routes import router as map_router
+from .api.auth_routes import router as auth_router
 from .database.session import DATABASE_URL, init_db
 from .services.ais_manager import AISManager
 
@@ -89,6 +90,7 @@ app.add_middleware(
 app.include_router(router)
 app.include_router(ais_router)
 app.include_router(map_router)
+app.include_router(auth_router)
 
 
 @app.exception_handler(RequestValidationError)

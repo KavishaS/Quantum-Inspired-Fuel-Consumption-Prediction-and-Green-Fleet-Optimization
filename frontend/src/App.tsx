@@ -1,4 +1,5 @@
 import { HashRouter, Route, Routes } from "react-router-dom";
+import { AuthProvider } from "@/context/AuthContext";
 import { Layout } from "@/components/layout/Layout";
 import { DemoGuide } from "@/components/layout/DemoGuide";
 import { Dashboard } from "@/pages/Dashboard";
@@ -15,24 +16,25 @@ import { LiveFleetMap } from "@/pages/LiveFleetMap";
 
 export default function App() {
   return (
-    <HashRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="predictor" element={<FuelPredictor />} />
-          <Route path="optimizer" element={<FleetOptimizer />} />
-          <Route path="sandbox" element={<FuelSandbox />} />
-          <Route path="pareto" element={<ParetoExplorer />} />
-          <Route path="benchmark" element={<Benchmarking />} />
-          <Route path="compliance" element={<Compliance />} />
-          <Route path="fleet" element={<FleetData />} />
-          <Route path="scenarios" element={<ScenarioManager />} />
-          <Route path="live-map" element={<LiveFleetMap />} />
-          <Route path="about" element={<About />} />
-
-        </Route>
-      </Routes>
-      <DemoGuide />
-    </HashRouter>
+    <AuthProvider>
+      <HashRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="predictor" element={<FuelPredictor />} />
+            <Route path="optimizer" element={<FleetOptimizer />} />
+            <Route path="sandbox" element={<FuelSandbox />} />
+            <Route path="pareto" element={<ParetoExplorer />} />
+            <Route path="benchmark" element={<Benchmarking />} />
+            <Route path="compliance" element={<Compliance />} />
+            <Route path="fleet" element={<FleetData />} />
+            <Route path="scenarios" element={<ScenarioManager />} />
+            <Route path="live-map" element={<LiveFleetMap />} />
+            <Route path="about" element={<About />} />
+          </Route>
+        </Routes>
+        <DemoGuide />
+      </HashRouter>
+    </AuthProvider>
   );
 }

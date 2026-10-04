@@ -18,11 +18,23 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("greenfleet_auth_token") : null;
+  const headers: Record<string, string> = {};
+  if (!(init?.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  if (init?.headers) {
+    Object.assign(headers, init.headers);
+  }
+
   let res: Response;
   try {
     res = await fetch(`${BASE}${path}`, {
-      headers: init?.body instanceof FormData ? undefined : { "Content-Type": "application/json" },
       ...init,
+      headers,
     });
   } catch {
     throw new ApiError(0, "Cannot reach the GreenFleet API. Is the backend running on port 8000?");
@@ -214,7 +226,104 @@ export interface QuantumPredictResponse {
 }
 
 export const predictMapRoutes = (body?: QuantumPredictRequest) =>
-
   post<QuantumPredictResponse>("/map/predict", body ?? {});
+
+// ------------------------------------------------------------- live weather
+
+export interface LiveMarineWeather {
+  latitude: number;
+  longitude: number;
+  wave_height_m: number;
+  wave_period_s: number;
+  wave_direction_deg?: number;
+  wind_wave_height_m: number;
+  swell_wave_height_m: number;
+  swell_wave_period_s: number;
+  ocean_current_velocity_kn: number;
+  ocean_current_direction_deg?: number;
+  wind_speed_kn: number;
+  wind_gusts_kn: number;
+  wind_direction_deg?: number;
+  temperature_c: number;
+  surface_pressure_hpa: number;
+  sea_state: "CALM" | "MODERATE" | "ROUGH" | "EXTREME";
+  source: string;
+  cached: boolean;
+  fetched_at: string;
+}
+
+export interface RouteWeatherProfile {
+  route_code: string;
+  sampled_waypoints_count: number;
+  summary: {
+    avg_wave_height_m: number;
+    max_wave_height_m: number;
+    avg_wind_speed_kn: number;
+    max_wind_speed_kn: number;
+    avg_current_kn: number;
+    dominant_sea_state: string;
+  };
+  waypoint_observations: LiveMarineWeather[];
+}
+
+export const getLiveWeather = (lat: number, lon: number) =>
+  get<LiveMarineWeather>(`/weather/live?lat=${lat}&lon=${lon}`);
+
+export const getRouteWeather = (routeCode: string) =>
+  get<RouteWeatherProfile>(`/weather/route/${encodeURIComponent(routeCode)}`);
+
+// ------------------------------------------------------------- telemetry
+
+export interface TelemetryRequest {
+  Ship_SpeedOverGround: number;
+  Consumer_Total_ShaftPower: number;
+  Weather_OceanCurrentVelocity?: number;
+  Weather_WaveHeight?: number;
+  Weather_WavePeriod?: number;
+  Weather_Temperature2M?: number;
+  Weather_SurfacePressure?: number;
+  Weather_WindSpeed10M?: number;
+  Weather_WindWaveHeight?: number;
+  Weather_SwellWaveHeight?: number;
+  Weather_SwellWavePeriod?: number;
+  Weather_WindGusts10M?: number;
+  vessel_id?: string;
+  distance_nm?: number;
+}
+
+export interface TelemetryResponse {
+  predicted_momentary_fuel_kg_s: number;
+  predicted_fuel_rate_mt_per_day: number;
+  estimated_sfoc_g_per_kwh: number | null;
+  interval_low_kg_s: number;
+  interval_high_kg_s: number;
+  model_r2: number;
+  vessel_id: string;
+  estimated_voyage_hours?: number;
+  estimated_voyage_fuel_tonnes?: number;
+}
+
+export const predictTelemetry = (body: TelemetryRequest) =>
+  post<TelemetryResponse>("/predict/telemetry", body);
+
+// ------------------------------------------------------------- authentication
+
+import type { AuthUser, DemoUserProfile, LoginResponse } from "@/types/auth";
+
+export const loginApi = (body: { username: string; password: string }) =>
+  post<LoginResponse>("/auth/login", body);
+
+export const registerApi = (body: {
+  username: string;
+  password: string;
+  display_name: string;
+  email?: string;
+  role?: string;
+}) => post<LoginResponse>("/auth/register", body);
+
+export const getMeApi = () => get<AuthUser>("/auth/me");
+
+export const listDemoUsersApi = () => get<{ users: DemoUserProfile[] }>("/auth/demo-users");
+
 
 

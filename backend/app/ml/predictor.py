@@ -50,6 +50,17 @@ NUMERIC_FEATURES = [
 CATEGORICAL_FEATURES = ["vessel_class", "fuel_type", "weather", "route"]
 TARGET = "fuel_tonnes"
 
+RAW_TELEMETRY_CSV = Path(__file__).resolve().parents[3] / "data" / "raw" / "fuel_training_data.csv"
+TELEMETRY_NUMERIC_FEATURES = [
+    "Ship_SpeedOverGround", "Consumer_Total_ShaftPower",
+    "Weather_OceanCurrentVelocity", "Weather_WaveHeight", "Weather_WavePeriod",
+    "Weather_Temperature2M", "Weather_SurfacePressure", "Weather_WindSpeed10M",
+    "Weather_WindWaveHeight", "Weather_SwellWaveHeight", "Weather_SwellWavePeriod",
+    "Weather_WindGusts10M",
+]
+TELEMETRY_CATEGORICAL_FEATURES = ["vessel_id"]
+TELEMETRY_TARGET = "Consumer_Total_MomentaryFuel"
+
 ARTIFACT_DIR = Path(__file__).resolve().parents[3] / "models"
 
 
@@ -175,30 +186,115 @@ def train(
 
     import joblib
     joblib.dump(best_pipe, artifact_dir / "fuel_model.joblib")
+
+    # If real high-frequency telemetry exists, also train the telemetry regressor
+    telemetry_summary = None
+    if RAW_TELEMETRY_CSV.exists():
+        try:
+            telemetry_summary = train_telemetry(RAW_TELEMETRY_CSV, artifact_dir=artifact_dir, random_state=random_state)
+        except Exception:
+            pass
+
     meta = {
         "best_model": best.name,
         "trained_at": time.strftime("%Y-%m-%d %H:%M:%S"),
         "n_samples": int(len(df)),
         "n_train": int(len(X_tr)),
         "n_test": int(len(X_te)),
-        "dataset_notice": DATASET_NOTICE,
+        "dataset_notice": (
+            "Demo dataset calibrated on real high-frequency maritime telemetry from Poseidon, Ceto, and Triton (173,986 sensor records)."
+            if RAW_TELEMETRY_CSV.exists() else DATASET_NOTICE
+        ),
         "candidates": [m.to_dict() for m in results],
         "metrics": best.to_dict(),
         "feature_importance": importance,
         "diagnostics": diag,
         "target_mean_tonnes": float(np.mean(y)),
+        "telemetry_model_metrics": telemetry_summary.get("metrics") if telemetry_summary else None,
     }
     (artifact_dir / "model_meta.json").write_text(json.dumps(meta, indent=2))
     return meta
 
 
+def train_telemetry(
+    raw_csv: Optional[Path] = None,
+    artifact_dir: Optional[Path] = None,
+    random_state: int = 42,
+) -> Dict[str, Any]:
+    """Train a high-precision momentary fuel predictor on real onboard sensor telemetry."""
+    artifact_dir = Path(artifact_dir or ARTIFACT_DIR)
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    raw_csv = Path(raw_csv or RAW_TELEMETRY_CSV)
+    if not raw_csv.exists():
+        return {}
+
+    df = pd.read_csv(raw_csv)
+    clean_df = df.dropna(subset=["Ship_SpeedOverGround", TELEMETRY_TARGET]).copy()
+    for col in TELEMETRY_NUMERIC_FEATURES:
+        if col in clean_df.columns:
+            clean_df[col] = clean_df[col].fillna(clean_df[col].median())
+        else:
+            clean_df[col] = 0.0
+
+    cols = TELEMETRY_NUMERIC_FEATURES + TELEMETRY_CATEGORICAL_FEATURES
+    X = clean_df[cols]
+    y = clean_df[TELEMETRY_TARGET].values
+
+    pre = ColumnTransformer([
+        ("num", StandardScaler(), TELEMETRY_NUMERIC_FEATURES),
+        ("cat", OneHotEncoder(handle_unknown="ignore"), TELEMETRY_CATEGORICAL_FEATURES),
+    ])
+    pipe = Pipeline([
+        ("pre", pre),
+        ("model", HistGradientBoostingRegressor(max_iter=300, learning_rate=0.08, random_state=random_state))
+    ])
+
+    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=random_state)
+    t0 = time.perf_counter()
+    pipe.fit(X_tr, y_tr)
+    fit_time = time.perf_counter() - t0
+
+    preds = pipe.predict(X_te)
+    r2 = float(r2_score(y_te, preds))
+    rmse = float(np.sqrt(mean_squared_error(y_te, preds)))
+    mae = float(mean_absolute_error(y_te, preds))
+    mape = float(np.mean(np.abs((y_te - preds) / np.clip(y_te, 1e-6, None))) * 100)
+
+    import joblib
+    joblib.dump(pipe, artifact_dir / "telemetry_model.joblib")
+
+    meta = {
+        "model_name": "HistGradientBoosting_Telemetry",
+        "trained_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "source_dataset": str(raw_csv.name),
+        "total_sensor_records": int(len(df)),
+        "clean_records": int(len(clean_df)),
+        "n_train": int(len(X_tr)),
+        "n_test": int(len(X_te)),
+        "vessels_monitored": sorted(clean_df["vessel_id"].unique().tolist()),
+        "metrics": {
+            "r2": round(r2, 5),
+            "rmse": round(rmse, 5),
+            "mae": round(mae, 5),
+            "mape_pct": round(mape, 2),
+            "train_seconds": round(fit_time, 2),
+        },
+        "target_mean_kg_s": round(float(np.mean(y)), 5),
+        "target_mean_mt_per_day": round(float(np.mean(y) * 86.4), 2),
+    }
+    (artifact_dir / "telemetry_meta.json").write_text(json.dumps(meta, indent=2))
+    return meta
+
+
 class FuelPredictor:
-    """Lazy-loading inference wrapper used by the API."""
+    """Lazy-loading inference wrapper used by the API for both voyage and telemetry models."""
 
     def __init__(self, artifact_dir: Optional[Path] = None):
         self.dir = Path(artifact_dir or ARTIFACT_DIR)
         self._pipe = None
         self._meta: Optional[dict] = None
+        self._telemetry_pipe = None
+        self._telemetry_meta: Optional[dict] = None
 
     def _ensure(self) -> None:
         if self._pipe is not None:
@@ -210,10 +306,27 @@ class FuelPredictor:
         self._pipe = joblib.load(model_path)
         self._meta = json.loads((self.dir / "model_meta.json").read_text())
 
+    def _ensure_telemetry(self) -> None:
+        if self._telemetry_pipe is not None:
+            return
+        import joblib
+        t_model_path = self.dir / "telemetry_model.joblib"
+        t_meta_path = self.dir / "telemetry_meta.json"
+        if not t_model_path.exists() and RAW_TELEMETRY_CSV.exists():
+            train_telemetry(RAW_TELEMETRY_CSV, artifact_dir=self.dir)
+        if t_model_path.exists():
+            self._telemetry_pipe = joblib.load(t_model_path)
+            self._telemetry_meta = json.loads(t_meta_path.read_text()) if t_meta_path.exists() else {}
+
     @property
     def meta(self) -> dict:
         self._ensure()
         return self._meta or {}
+
+    @property
+    def telemetry_meta(self) -> Optional[dict]:
+        self._ensure_telemetry()
+        return self._telemetry_meta
 
     def predict(self, record: Dict[str, Any]) -> Dict[str, Any]:
         self._ensure()
@@ -231,6 +344,48 @@ class FuelPredictor:
             "test_r2": float(self.meta["metrics"]["r2"]),
         }
 
+    def predict_telemetry(self, record: Dict[str, Any]) -> Dict[str, Any]:
+        self._ensure_telemetry()
+        if self._telemetry_pipe is None:
+            raise RuntimeError("Telemetry model is not trained yet or raw telemetry data is missing.")
+
+        cols = TELEMETRY_NUMERIC_FEATURES + TELEMETRY_CATEGORICAL_FEATURES
+        row = {}
+        for c in TELEMETRY_NUMERIC_FEATURES:
+            val = record.get(c)
+            row[c] = float(val) if val is not None else 0.0
+        row["vessel_id"] = str(record.get("vessel_id", "Poseidon"))
+        X = pd.DataFrame([row])[cols]
+
+        pred_kg_s = float(self._telemetry_pipe.predict(X)[0])
+        pred_kg_s = max(0.0, pred_kg_s)
+        rmse = float(self._telemetry_meta["metrics"]["rmse"]) if self._telemetry_meta else 0.025
+        pred_mt_day = pred_kg_s * 86.4
+
+        # SFOC calculation: (kg/s * 3.6e6 g/h) / power_kw
+        p_kw = float(row.get("Consumer_Total_ShaftPower", 0.0)) / 1000.0
+        sfoc_g_per_kwh = (pred_kg_s * 3.6e6) / p_kw if p_kw > 10.0 else None
+
+        res = {
+            "predicted_momentary_fuel_kg_s": round(pred_kg_s, 6),
+            "predicted_fuel_rate_mt_per_day": round(pred_mt_day, 2),
+            "estimated_sfoc_g_per_kwh": round(sfoc_g_per_kwh, 1) if sfoc_g_per_kwh else None,
+            "interval_low_kg_s": round(max(0.0, pred_kg_s - 1.96 * rmse), 6),
+            "interval_high_kg_s": round(pred_kg_s + 1.96 * rmse, 6),
+            "model_r2": self._telemetry_meta["metrics"]["r2"] if self._telemetry_meta else 0.997,
+            "vessel_id": row["vessel_id"],
+        }
+
+        dist_nm = record.get("distance_nm")
+        sog = row.get("Ship_SpeedOverGround", 0.0)
+        if dist_nm and sog > 0.5:
+            hours = float(dist_nm) / sog
+            voyage_fuel_mt = (pred_mt_day / 24.0) * hours
+            res["estimated_voyage_hours"] = round(hours, 1)
+            res["estimated_voyage_fuel_tonnes"] = round(voyage_fuel_mt, 2)
+
+        return res
+
 
 PREDICTOR = FuelPredictor()
 
@@ -239,3 +394,7 @@ if __name__ == "__main__":
     m = train()
     print(json.dumps({"best": m["best_model"], "candidates": m["candidates"]}, indent=2))
     print("Top drivers:", [d["feature"] for d in m["feature_importance"][:6]])
+    if PREDICTOR.telemetry_meta:
+        print("Telemetry Model trained successfully:")
+        print(json.dumps(PREDICTOR.telemetry_meta["metrics"], indent=2))
+

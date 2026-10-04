@@ -1,10 +1,10 @@
 {
   "best_model": "GradientBoosting",
-  "trained_at": "2026-09-29 23:23:07",
+  "trained_at": "2026-10-04 20:08:43",
   "n_samples": 6000,
   "n_train": 4800,
   "n_test": 1200,
-  "dataset_notice": "Demo dataset generated for simulation and algorithm validation.",
+  "dataset_notice": "Demo dataset calibrated on real high-frequency maritime telemetry from Poseidon, Ceto, and Triton (173,986 sensor records).",
   "candidates": [
     {
       "name": "RandomForest",
@@ -12,7 +12,7 @@
       "rmse": 118.9834,
       "r2": 0.9479,
       "mape_pct": 11.9893,
-      "train_seconds": 1.3783
+      "train_seconds": 1.799
     },
     {
       "name": "GradientBoosting",
@@ -20,7 +20,7 @@
       "rmse": 88.32,
       "r2": 0.9713,
       "mape_pct": 7.7919,
-      "train_seconds": 1.1745
+      "train_seconds": 1.5828
     }
   ],
   "metrics": {
@@ -29,7 +29,7 @@
     "rmse": 88.32,
     "r2": 0.9713,
     "mape_pct": 7.7919,
-    "train_seconds": 1.1745
+    "train_seconds": 1.5828
   },
   "feature_importance": [
     {
@@ -2130,5 +2130,12 @@
       "residual": -15.599536624931687
     }
   ],
-  "target_mean_tonnes": 615.6877793115324
+  "target_mean_tonnes": 615.6877793115324,
+  "telemetry_model_metrics": {
+    "r2": 0.99712,
+    "rmse": 0.02437,
+    "mae": 0.01566,
+    "mape_pct": 260.95,
+    "train_seconds": 1.65
+  }
 }

@@ -304,3 +304,63 @@ class ReportRequest(BaseModel):
     include_fuel_sandbox: bool = True
     benchmark_runs: int = Field(3, ge=1, le=20)
     pareto_samples: int = Field(7, ge=3, le=21)
+
+
+class TelemetryPredictionRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore", populate_by_name=True)
+
+    ship_speed_over_ground: float = Field(..., ge=0, le=40, alias="Ship_SpeedOverGround")
+    consumer_total_shaft_power: float = Field(..., ge=0, le=100_000_000, alias="Consumer_Total_ShaftPower")
+    weather_ocean_current_velocity: float = Field(0.0, ge=-10, le=10, alias="Weather_OceanCurrentVelocity")
+    weather_wave_height: float = Field(0.0, ge=0, le=30, alias="Weather_WaveHeight")
+    weather_wave_period: float = Field(5.0, ge=0, le=30, alias="Weather_WavePeriod")
+    weather_temperature_2m: float = Field(20.0, ge=-30, le=60, alias="Weather_Temperature2M")
+    weather_surface_pressure: float = Field(1013.25, ge=800, le=1100, alias="Weather_SurfacePressure")
+    weather_wind_speed_10m: float = Field(0.0, ge=0, le=100, alias="Weather_WindSpeed10M")
+    weather_wind_wave_height: float = Field(0.0, ge=0, le=30, alias="Weather_WindWaveHeight")
+    weather_swell_wave_height: float = Field(0.0, ge=0, le=30, alias="Weather_SwellWaveHeight")
+    weather_swell_wave_period: float = Field(5.0, ge=0, le=30, alias="Weather_SwellWavePeriod")
+    weather_wind_gusts_10m: float = Field(0.0, ge=0, le=120, alias="Weather_WindGusts10M")
+    vessel_id: Optional[str] = "Poseidon"
+    distance_nm: Optional[float] = Field(None, ge=1, le=30_000)
+
+
+# ------------------------------------------------------------- authentication
+
+class LoginRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    username: str = Field(..., min_length=2, max_length=64)
+    password: str = Field(..., min_length=4, max_length=128)
+
+
+class RegisterRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    username: str = Field(..., min_length=2, max_length=64)
+    password: str = Field(..., min_length=6, max_length=128)
+    display_name: str = Field(..., min_length=2, max_length=128)
+    email: str = Field("", max_length=128)
+    role: str = Field("analyst", description="admin | analyst | auditor")
+
+    @field_validator("role")
+    @classmethod
+    def _validate_role(cls, v: str) -> str:
+        r = v.lower()
+        if r not in {"admin", "analyst", "auditor"}:
+            raise ValueError("Role must be one of: 'admin', 'analyst', 'auditor'")
+        return r
+
+
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    display_name: str
+    email: str
+    role: str
+    is_active: bool
+
+
+class AuthTokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
+

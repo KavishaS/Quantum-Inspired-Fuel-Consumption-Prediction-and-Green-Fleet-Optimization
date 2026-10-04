@@ -1,20 +1,22 @@
 import { useState } from "react";
-import { Copy, Sparkles, Trash2 } from "lucide-react";
+import { Copy, Sparkles, Trash2, Lock, ShieldCheck } from "lucide-react";
 import { useAsync } from "@/hooks/useAsync";
+import { useAuth } from "@/context/AuthContext";
 import { deleteScenario, duplicateScenario, loadDemo, listScenarios } from "@/services/api";
 import { ApiError } from "@/services/api";
 import { Button } from "@/components/ui/Controls";
-import { ChartCard } from "@/components/ui/ChartCard";
 import { LoadingState, ErrorState } from "@/components/ui/States";
 import { fmtNum } from "@/utils/format";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 
 export function ScenarioManager() {
   const { data, loading, error, reload } = useAsync(listScenarios);
+  const { isAuditor, isAdmin, canDeleteScenarios } = useAuth();
   const [busy, setBusy] = useState<number | "demo" | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
 
   const runDemo = async () => {
+    if (isAuditor) return;
     setBusy("demo");
     setMsg(null);
     try {
@@ -29,11 +31,16 @@ export function ScenarioManager() {
   };
 
   const dup = async (id: number) => {
+    if (isAuditor) return;
     setBusy(id);
     try { await duplicateScenario(id); reload(); } finally { setBusy(null); }
   };
 
   const remove = async (id: number) => {
+    if (!isAdmin) {
+      setMsg("Access Denied: Only Fleet Director (Admin) has authority to delete scenarios.");
+      return;
+    }
     setBusy(id);
     try {
       await deleteScenario(id);
@@ -52,10 +59,30 @@ export function ScenarioManager() {
           <h1 className="font-display text-xl font-semibold text-slate-ink">Scenario Manager</h1>
           <p className="text-sm text-slate-body mt-0.5">Save, duplicate, compare and delete fleet planning scenarios.</p>
         </div>
-        <Button onClick={runDemo} disabled={busy === "demo"}>
-          <Sparkles className="h-4 w-4" /> {busy === "demo" ? "Loading…" : "Load Demo Scenario"}
+        <Button onClick={runDemo} disabled={busy === "demo" || isAuditor}>
+          {isAuditor ? (
+            <span className="flex items-center gap-1.5 text-slate-400">
+              <Lock className="h-3.5 w-3.5" /> Demo Locked (Auditor)
+            </span>
+          ) : (
+            <>
+              <Sparkles className="h-4 w-4" /> {busy === "demo" ? "Loading…" : "Load Demo Scenario"}
+            </>
+          )}
         </Button>
       </div>
+
+      {isAuditor && (
+        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3 text-emerald-300">
+          <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
+          <div>
+            <div className="font-semibold text-sm">Auditor Mode (Read-Only)</div>
+            <div className="text-xs text-emerald-300/80">
+              ESG Auditors have read-only authority to inspect scenario payloads, cargo demands, and operational constraints. Creating, duplicating, or deleting scenarios requires Analyst or Admin role.
+            </div>
+          </div>
+        </div>
+      )}
 
       {msg && <div className="glass-panel rounded-xl p-3 text-sm text-slate-body">{msg}</div>}
 
@@ -78,13 +105,32 @@ export function ScenarioManager() {
                 <span>Tag: <strong className="text-slate-ink">{s.tag}</strong></span>
               </div>
               <div className="route-rule" />
-              <div className="flex gap-2">
-                <Button variant="secondary" onClick={() => dup(s.id)} disabled={busy === s.id}>
-                  <Copy className="h-3.5 w-3.5" /> Duplicate
+              <div className="flex gap-2 items-center">
+                <Button
+                  variant="secondary"
+                  onClick={() => dup(s.id)}
+                  disabled={busy === s.id || isAuditor}
+                  title={isAuditor ? "Auditors cannot duplicate scenarios" : "Create working copy"}
+                >
+                  {isAuditor ? <Lock className="h-3.5 w-3.5 text-slate-500" /> : <Copy className="h-3.5 w-3.5" />} Duplicate
                 </Button>
                 {!s.is_demo && (
-                  <Button variant="ghost" onClick={() => remove(s.id)} disabled={busy === s.id}>
-                    <Trash2 className="h-3.5 w-3.5 text-danger" />
+                  <Button
+                    variant="ghost"
+                    onClick={() => remove(s.id)}
+                    disabled={busy === s.id || !isAdmin}
+                    title={
+                      !isAdmin
+                        ? "Deletion restricted: Only Fleet Director (Admin) can delete scenarios"
+                        : "Delete scenario"
+                    }
+                    className={!isAdmin ? "opacity-40 cursor-not-allowed" : ""}
+                  >
+                    {!isAdmin ? (
+                      <Lock className="h-3.5 w-3.5 text-slate-500" />
+                    ) : (
+                      <Trash2 className="h-3.5 w-3.5 text-danger" />
+                    )}
                   </Button>
                 )}
               </div>

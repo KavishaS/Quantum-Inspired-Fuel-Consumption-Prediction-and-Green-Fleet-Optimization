@@ -29,6 +29,14 @@ PORT_COORDS: Dict[str, Tuple[float, float]] = {
     # Africa / Indian Ocean
     "Richards Bay":  (-28.7830,   32.0681),
     "Paradip":       (20.2600,    86.6700),   # Paradip Port, Odisha, India
+    "Mumbai (JNPT)": (18.9499,    72.9515),   # Jawaharlal Nehru Port, India
+    "Colombo":       (6.9271,     79.8612),   # Colombo, Sri Lanka
+    "Fujairah":      (25.1288,    56.3265),   # Major UAE Bunkering Hub
+    "Shanghai":      (31.2304,   121.4737),   # Shanghai Port, China
+    "Antwerp":       (51.2194,     4.4025),   # Port of Antwerp-Bruges, Belgium
+    "Houston":       (29.7604,   -95.3698),   # Port of Houston, USA
+    "Port Said":     (31.2653,    32.3019),   # Suez Canal North Entrance
+    "Suez":          (29.9668,    32.5498),   # Suez Canal South Entrance
 }
 
 
@@ -112,6 +120,48 @@ ROUTE_WAYPOINTS: Dict[str, List[Tuple[float, float]]] = {
         (26.0,      122.0),      # East China Sea
         (30.0,      122.5),      # East China Sea north
         (36.0671,   120.3826),   # Qingdao
+    ],
+    # ── R06: Mumbai (JNPT) → Rotterdam (6 300 nm via Suez) ────────────
+    "R06": [
+        (18.9499,    72.9515),   # Mumbai JNPT
+        (16.0,       68.0),      # Arabian Sea West
+        (13.5,       55.0),      # Gulf of Aden East approach
+        (12.6,       45.0),      # Gulf of Aden West
+        (12.58,      43.33),     # Bab-el-Mandeb Strait
+        (18.0,       39.5),      # Red Sea South
+        (24.0,       36.5),      # Red Sea Mid
+        (28.0,       33.5),      # Gulf of Suez
+        (29.96,      32.55),     # Suez Canal Entrance
+        (31.26,      32.30),     # Port Said Exit
+        (33.5,       26.0),      # Eastern Mediterranean (South of Crete)
+        (36.5,       17.0),      # Ionian Sea / South of Sicily
+        (37.5,        7.0),      # Western Mediterranean (Sardinia Channel)
+        (36.1,       -5.4),      # Strait of Gibraltar
+        (43.0,       -9.0),      # Cape Finisterre rounding
+        (48.5,       -5.5),      # Ushant / English Channel West
+        (50.0,       -2.5),      # English Channel Mid
+        (51.9244,     4.4777),   # Rotterdam
+    ],
+    # ── R07: Shanghai → Rotterdam (10 500 nm via Suez) ─────────────────
+    "R07": [
+        (31.2304,   121.4737),   # Shanghai Port
+        (28.0,      122.5),      # East China Sea
+        (22.0,      119.5),      # Taiwan Strait
+        (12.0,      112.0),      # South China Sea
+        (3.0,       105.5),      # South China Sea Southwest
+        (1.2655,    103.8198),   # Singapore
+        (2.5,       101.5),      # Malacca Strait
+        (5.5,        97.0),      # Northern Malacca exit
+        (6.0,        80.5),      # South of Sri Lanka
+        (10.0,       65.0),      # Central Arabian Sea
+        (12.6,       45.0),      # Gulf of Aden
+        (12.58,      43.33),     # Bab-el-Mandeb
+        (24.0,       36.5),      # Red Sea
+        (29.96,      32.55),     # Suez Canal
+        (31.26,      32.30),     # Port Said
+        (36.1,       -5.4),      # Strait of Gibraltar
+        (48.5,       -5.5),      # Finisterre / English Channel
+        (51.9244,     4.4777),   # Rotterdam
     ],
 }
 

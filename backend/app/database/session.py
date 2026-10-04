@@ -90,9 +90,19 @@ def seed(db: Session, n_vessels: int = 24) -> dict:
             db.add(r)
             created["routes"] += 1
 
-    if not db.scalar(select(User).limit(1)):
-        db.add(User(username="demo", display_name="Fleet Analyst (Demo)", role="analyst"))
-        created["users"] += 1
+    from ..services.auth import DEMO_USERS, hash_password
+    for du in DEMO_USERS:
+        existing = db.scalar(select(User).where(User.username == du["username"]))
+        if not existing:
+            db.add(User(
+                username=du["username"],
+                display_name=du["display_name"],
+                email=du["email"],
+                role=du["role"],
+                password_hash=hash_password(du["password"]),
+                is_active=True,
+            ))
+            created["users"] += 1
 
     db.commit()
 
@@ -111,6 +121,22 @@ def seed(db: Session, n_vessels: int = 24) -> dict:
 def init_db(with_seed: bool = True) -> dict:
     (ROOT / "data").mkdir(parents=True, exist_ok=True)
     Base.metadata.create_all(engine)
+    # Lightweight schema migration for SQLite / Postgres
+    from sqlalchemy import text
+    with engine.begin() as conn:
+        try:
+            if DATABASE_URL.startswith("sqlite"):
+                cols = [r[1] for r in conn.execute(text("PRAGMA table_info(users)")).fetchall()]
+                if cols:
+                    if "email" not in cols:
+                        conn.execute(text("ALTER TABLE users ADD COLUMN email VARCHAR(128) DEFAULT ''"))
+                    if "password_hash" not in cols:
+                        conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(256) DEFAULT ''"))
+                    if "is_active" not in cols:
+                        conn.execute(text("ALTER TABLE users ADD COLUMN is_active BOOLEAN DEFAULT 1"))
+        except Exception:
+            pass
+
     if not with_seed:
         return {}
     db = SessionLocal()
