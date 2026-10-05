@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       id: 2,
       username: "analyst",
       display_name: "Dr. Marcus Chen",
-      email: "marcus.chen@greenfleet.io",
+      email: "marcus.chen@vates.io",
       role: "analyst",
       is_active: true,
     };

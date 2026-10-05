@@ -16,12 +16,25 @@ export function About() {
   return (
     <div className="flex flex-col gap-8 max-w-3xl">
       <div>
-        <div className="flex items-center gap-2 text-steel">
-          <Waves className="h-5 w-5" />
-          <span className="font-display text-sm font-semibold tracking-wide">GREENFLEET QUANTUM</span>
+        <div className="flex items-center gap-3.5">
+          <img
+            src="/vates-emblem.png"
+            alt="VATES Emblem"
+            className="h-14 w-14 object-contain drop-shadow-[0_6px_16px_rgba(11,45,79,0.30)]"
+          />
+          <div className="flex flex-col items-center justify-center">
+            <img
+              src="/vates-wordmark.png"
+              alt="VATES"
+              className="h-[25px] w-auto object-contain drop-shadow-[0_1px_2px_rgba(11,45,79,0.15)]"
+            />
+            <span className="text-[10px] font-bold tracking-[0.16em] text-sky-700/80 uppercase mt-1 font-brand text-center w-full pl-[0.16em]">
+              Quantum Maritime Intelligence
+            </span>
+          </div>
         </div>
-        <h1 className="font-display text-2xl font-semibold text-slate-ink mt-2">About &amp; Methodology</h1>
-        <p className="text-sm text-slate-body mt-1">PS-138 — Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization</p>
+        <h1 className="font-display text-2xl font-bold text-slate-900 mt-4">About &amp; Methodology</h1>
+        <p className="text-sm text-slate-500 mt-1">Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization Platform</p>
       </div>
 
       <section className="glass-panel rounded-xl p-5">
@@ -120,8 +133,8 @@ export function About() {
         )}
       </section>
 
-      <section className="border border-warn/25 bg-warn/5 p-4 text-xs text-slate-body">
-        This is a demonstration platform built for Smart India Hackathon problem statement PS-138. Compliance
+      <section className="rounded-xl border border-amber-200 bg-amber-50/60 p-4 text-xs text-amber-900/90 leading-relaxed">
+        This is an advanced simulation and decision-support platform for maritime green fleet decarbonization. Compliance
         figures are model estimates, not certified regulatory calculations. The bundled dataset is synthetic
         and generated for simulation and algorithm validation.
       </section>

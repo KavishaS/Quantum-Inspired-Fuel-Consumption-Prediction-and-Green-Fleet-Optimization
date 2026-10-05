@@ -71,68 +71,74 @@ export const THEME_CONFIG: Record<
   }
 > = {
   oceanic: {
-    name: "Oceanic Cyber",
-    primary: "#06B6D4",
-    secondary: "#0284C7",
-    glow: "rgba(6, 182, 212, 0.4)",
-    border: "border-cyan-500/30 hover:border-cyan-500/60",
-    text: "text-cyan-400",
-    bgPanel: "bg-[#070d1a]/90 backdrop-blur-xl border border-cyan-500/20",
-    bgHeader: "bg-[#070d1a]/85 backdrop-blur-xl border-b border-cyan-500/20",
-    bgInput: "bg-[#040812] border-slate-800 focus:border-cyan-400",
-    btnGradient: "from-cyan-500 via-teal-500 to-emerald-400 text-slate-950",
-    ringColor: "ring-cyan-400",
-    dotColor: "bg-cyan-400",
+    name: "Oceanic Clean",
+    primary: "#0284c7",
+    secondary: "#0369a1",
+    glow: "rgba(2, 132, 199, 0.2)",
+    border: "border-sky-300 hover:border-sky-500",
+    text: "text-sky-700",
+    bgPanel: "bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl",
+    bgHeader: "bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm",
+    bgInput: "bg-slate-50 border-slate-300 text-slate-800 focus:border-sky-500 focus:bg-white",
+    btnGradient: "from-sky-500 via-sky-600 to-teal-600 text-white",
+    ringColor: "ring-sky-500",
+    dotColor: "bg-sky-500",
   },
   emerald: {
     name: "Green Maritime",
-    primary: "#10B981",
-    secondary: "#059669",
-    glow: "rgba(16, 185, 129, 0.4)",
-    border: "border-emerald-500/30 hover:border-emerald-500/60",
-    text: "text-emerald-400",
-    bgPanel: "bg-[#05130e]/90 backdrop-blur-xl border border-emerald-500/20",
-    bgHeader: "bg-[#05130e]/85 backdrop-blur-xl border-b border-emerald-500/20",
-    bgInput: "bg-[#020a07] border-slate-800 focus:border-emerald-400",
-    btnGradient: "from-emerald-500 via-teal-500 to-cyan-400 text-slate-950",
-    ringColor: "ring-emerald-400",
-    dotColor: "bg-emerald-400",
+    primary: "#059669",
+    secondary: "#047857",
+    glow: "rgba(5, 150, 105, 0.2)",
+    border: "border-emerald-300 hover:border-emerald-500",
+    text: "text-emerald-700",
+    bgPanel: "bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl",
+    bgHeader: "bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm",
+    bgInput: "bg-slate-50 border-slate-300 text-slate-800 focus:border-emerald-500 focus:bg-white",
+    btnGradient: "from-emerald-500 via-teal-600 to-cyan-600 text-white",
+    ringColor: "ring-emerald-500",
+    dotColor: "bg-emerald-500",
   },
   violet: {
     name: "Quantum Violet",
-    primary: "#8B5CF6",
-    secondary: "#6366F1",
-    glow: "rgba(139, 92, 246, 0.4)",
-    border: "border-purple-500/30 hover:border-purple-500/60",
-    text: "text-purple-400",
-    bgPanel: "bg-[#0d081f]/90 backdrop-blur-xl border border-purple-500/20",
-    bgHeader: "bg-[#0d081f]/85 backdrop-blur-xl border-b border-purple-500/20",
-    bgInput: "bg-[#070313] border-slate-800 focus:border-purple-400",
-    btnGradient: "from-purple-500 via-indigo-500 to-cyan-400 text-white",
-    ringColor: "ring-purple-400",
-    dotColor: "bg-purple-400",
+    primary: "#7c3aed",
+    secondary: "#6d28d9",
+    glow: "rgba(124, 58, 237, 0.2)",
+    border: "border-purple-300 hover:border-purple-500",
+    text: "text-purple-700",
+    bgPanel: "bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl",
+    bgHeader: "bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm",
+    bgInput: "bg-slate-50 border-slate-300 text-slate-800 focus:border-purple-500 focus:bg-white",
+    btnGradient: "from-purple-600 via-indigo-600 to-sky-600 text-white",
+    ringColor: "ring-purple-500",
+    dotColor: "bg-purple-500",
   },
   tactical: {
     name: "Tactical Amber",
-    primary: "#F59E0B",
-    secondary: "#D97706",
-    glow: "rgba(245, 158, 11, 0.4)",
-    border: "border-amber-500/30 hover:border-amber-500/60",
-    text: "text-amber-400",
-    bgPanel: "bg-[#150f05]/90 backdrop-blur-xl border border-amber-500/20",
-    bgHeader: "bg-[#150f05]/85 backdrop-blur-xl border-b border-amber-500/20",
-    bgInput: "bg-[#0a0702] border-slate-800 focus:border-amber-400",
-    btnGradient: "from-amber-500 via-orange-500 to-yellow-400 text-slate-950",
-    ringColor: "ring-amber-400",
-    dotColor: "bg-amber-400",
+    primary: "#d97706",
+    secondary: "#b45309",
+    glow: "rgba(217, 119, 6, 0.2)",
+    border: "border-amber-300 hover:border-amber-500",
+    text: "text-amber-700",
+    bgPanel: "bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl",
+    bgHeader: "bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm",
+    bgInput: "bg-slate-50 border-slate-300 text-slate-800 focus:border-amber-500 focus:bg-white",
+    btnGradient: "from-amber-500 via-orange-500 to-amber-600 text-white",
+    ringColor: "ring-amber-500",
+    dotColor: "bg-amber-500",
   },
 };
 
 // ─── Tile Providers (100% Free, Zero Watermark) ─────────────────────────────
 const TILE_PROVIDERS = {
-  dark: {
-    name: "Dark Maritime",
-    url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+  osm: {
+    name: "Standard OSM",
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: "&copy; OpenStreetMap contributors",
+    maxZoom: 19,
+  },
+  light: {
+    name: "Light Canvas",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
     attribution: "&copy; Esri &mdash; Esri, DeLorme, NAVTEQ",
     maxZoom: 16,
   },
@@ -142,11 +148,11 @@ const TILE_PROVIDERS = {
     attribution: "&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS",
     maxZoom: 18,
   },
-  osm: {
-    name: "Standard OSM",
-    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    attribution: "&copy; OpenStreetMap contributors",
-    maxZoom: 19,
+  dark: {
+    name: "Dark Maritime",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+    attribution: "&copy; Esri &mdash; Esri, DeLorme, NAVTEQ",
+    maxZoom: 16,
   },
 };
 
@@ -284,7 +290,7 @@ function FitBoundsControl({
         <button
           onClick={handleFit}
           title="Fit view to route network"
-          className="bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-white border border-slate-700/80 p-2 rounded-xl shadow-lg transition-all flex items-center justify-center cursor-pointer"
+          className="bg-white/95 hover:bg-white text-slate-700 hover:text-slate-900 border border-slate-200 p-2 rounded-xl shadow-lg transition-all flex items-center justify-center cursor-pointer"
         >
           <Maximize2 className="h-4 w-4" />
         </button>
@@ -362,7 +368,7 @@ export function LiveFleetMap() {
   const [activeSidebarTab, setActiveSidebarTab] = useState<"predictor" | "fleet">("predictor");
   const [activeVesselFilter, setActiveVesselFilter] = useState<"live" | "all" | "pinned">("live");
   const [search, setSearch] = useState("");
-  const [mapStyle, setMapStyle] = useState<"dark" | "satellite" | "osm">("dark");
+  const [mapStyle, setMapStyle] = useState<"osm" | "light" | "satellite" | "dark">("osm");
   const [showNauticalOverlay, setShowNauticalOverlay] = useState(false);
   const [targetLocation, setTargetLocation] = useState<[number, number] | null>(null);
   const [targetRouteBounds, setTargetRouteBounds] = useState<[number, number][] | null>(null);
@@ -578,33 +584,38 @@ export function LiveFleetMap() {
   const activeTileConfig = TILE_PROVIDERS[mapStyle];
 
   return (
-    <div className="relative w-full h-full bg-[#060913] text-slate-100 overflow-hidden font-sans select-none flex flex-col">
+    <div className="relative w-full h-full bg-slate-100 text-slate-800 overflow-hidden font-sans select-none flex flex-col">
       
       {/* ─── 1. TOP COMMAND BAR (INTEGRATED HUD) ─────────────────────────────── */}
-      <header className={clsx("h-14 shrink-0 px-4 flex items-center justify-between gap-3 z-30 transition-colors duration-300 shadow-md", themeConfig.bgHeader)}>
+      <header className={clsx("h-14 shrink-0 px-4 flex items-center justify-between gap-3 z-30 transition-colors duration-300 shadow-sm border-b border-slate-200", themeConfig.bgHeader)}>
         
         {/* Left: Brand & Live Stream Beacon */}
         <div className="flex items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className={clsx("w-8 h-8 rounded-xl p-[1px] bg-gradient-to-tr shadow-md", themeConfig.btnGradient)}>
-              <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center">
-                <Compass className={clsx("h-4 w-4 animate-spin-slow", themeConfig.text)} />
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <img
+                src="/vates-emblem.png"
+                alt="VATES Emblem"
+                className="h-9 w-9 object-contain drop-shadow-[0_3px_8px_rgba(11,45,79,0.22)]"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-black tracking-wider uppercase bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-                  Quantum Fleet Deck
+                <span className="font-display text-[15px] font-black tracking-[0.09em] text-[#0B2D4F]">
+                  VATES
+                </span>
+                <span className="text-[10px] font-black tracking-wider uppercase text-slate-700">
+                  Fleet Deck
                 </span>
                 <span className={clsx("px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border", themeConfig.text, themeConfig.border)}>
-                  SIH PS-138
+                  LIVE
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
-                <span className={clsx("inline-block h-2 w-2 rounded-full", apiKeyConfigured ? "bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]" : "bg-amber-400")} />
+              <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1.5">
+                <span className={clsx("inline-block h-2 w-2 rounded-full", apiKeyConfigured ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" : "bg-amber-500")} />
                 {apiKeyConfigured ? (
                   <span>
-                    <strong className="text-white font-semibold">{vessels.length.toLocaleString()}</strong> AIS Live Streams Active
+                    <strong className="text-slate-800 font-semibold">{vessels.length.toLocaleString()}</strong> AIS Live Streams Active
                   </span>
                 ) : (
                   "Fallback Simulation Mode Active"
@@ -613,7 +624,7 @@ export function LiveFleetMap() {
             </div>
           </div>
 
-          <div className="h-5 w-[1px] bg-slate-800 hidden md:block" />
+          <div className="h-5 w-[1px] bg-slate-200 hidden md:block" />
 
           {/* Left Mission Control Deck Toggle Button */}
           <button
@@ -621,12 +632,12 @@ export function LiveFleetMap() {
             className={clsx(
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all duration-200 shadow-sm",
               isLeftDeckOpen
-                ? "bg-slate-800 text-white border-slate-600"
-                : "bg-slate-950 text-slate-400 border-slate-800 hover:text-white"
+                ? "bg-slate-900 text-white border-slate-900"
+                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
             )}
             title="Toggle Mission Control Dock"
           >
-            <SlidersHorizontal className={clsx("h-3.5 w-3.5", themeConfig.text)} />
+            <SlidersHorizontal className={clsx("h-3.5 w-3.5", isLeftDeckOpen ? "text-cyan-300" : themeConfig.text)} />
             <span className="hidden sm:inline">Mission Control</span>
             {isLeftDeckOpen ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
           </button>
@@ -636,7 +647,7 @@ export function LiveFleetMap() {
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1">
           
           {/* UI Color Theme Picker */}
-          <div className="flex items-center gap-1 bg-slate-950/90 p-1 rounded-xl border border-slate-800 shadow-inner" title="Select UI Color Theme">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner" title="Select UI Color Theme">
             <Palette className={clsx("h-3.5 w-3.5 ml-1 mr-0.5", themeConfig.text)} />
             {(["oceanic", "emerald", "violet", "tactical"] as const).map((tKey) => {
               const cfg = THEME_CONFIG[tKey];
@@ -648,8 +659,8 @@ export function LiveFleetMap() {
                   className={clsx(
                     "flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all capitalize",
                     isSelected
-                      ? "bg-slate-800 text-white shadow-sm ring-1 " + cfg.ringColor
-                      : "text-slate-400 hover:text-slate-200"
+                      ? "bg-white text-slate-900 shadow-sm ring-1 " + cfg.ringColor
+                      : "text-slate-600 hover:text-slate-900"
                   )}
                 >
                   <span className={clsx("h-2 w-2 rounded-full", cfg.dotColor)} />
@@ -660,36 +671,36 @@ export function LiveFleetMap() {
           </div>
 
           {/* Tile Style Picker */}
-          <div className="flex items-center gap-0.5 bg-slate-950/90 p-1 rounded-xl border border-slate-800 shadow-inner">
+          <div className="flex items-center gap-0.5 bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
             <Globe className={clsx("h-3.5 w-3.5 ml-1 mr-0.5", themeConfig.text)} />
-            {(["dark", "satellite", "osm"] as const).map((styleKey) => (
+            {(["osm", "light", "satellite", "dark"] as const).map((styleKey) => (
               <button
                 key={styleKey}
                 onClick={() => setMapStyle(styleKey)}
                 className={clsx(
                   "px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all capitalize",
                   mapStyle === styleKey
-                    ? "bg-slate-800 text-white shadow-sm border border-slate-700"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-white text-slate-900 shadow-sm border border-slate-300"
+                    : "text-slate-600 hover:text-slate-900"
                 )}
               >
-                {styleKey === "osm" ? "OSM" : styleKey}
+                {styleKey === "osm" ? "OSM" : styleKey === "light" ? "Light" : styleKey === "dark" ? "Dark" : "Sat"}
               </button>
             ))}
           </div>
 
           {/* Layer Pills */}
-          <div className="flex items-center gap-1 bg-slate-950/90 p-1 rounded-xl border border-slate-800">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
             <button
               onClick={() => setShowPredictedRoutes((v) => !v)}
               className={clsx(
                 "flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all border",
                 showPredictedRoutes
-                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-sm"
-                  : "text-slate-400 border-transparent hover:text-slate-200"
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-300 shadow-sm"
+                  : "text-slate-600 border-transparent hover:text-slate-900"
               )}
             >
-              <Sparkles className="h-3 w-3 text-emerald-400" />
+              <Sparkles className="h-3 w-3 text-emerald-600" />
               <span>Predictions</span>
               <span className="text-[9px] opacity-75 font-mono">({predictedCandidates.length})</span>
             </button>
@@ -700,11 +711,11 @@ export function LiveFleetMap() {
                 className={clsx(
                   "flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all border",
                   showVessels
-                    ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-sm"
-                    : "text-slate-400 border-transparent hover:text-slate-200"
+                    ? "bg-sky-50 text-sky-800 border-sky-300 shadow-sm"
+                    : "text-slate-600 border-transparent hover:text-slate-900"
                 )}
               >
-                <Ship className="h-3 w-3 text-cyan-400" />
+                <Ship className="h-3 w-3 text-sky-600" />
                 <span>AIS</span>
                 <span className="text-[9px] opacity-85 font-mono">
                   ({displayedVessels.length.toLocaleString()} in view / {vessels.length.toLocaleString()})
@@ -715,7 +726,7 @@ export function LiveFleetMap() {
                 <select
                   value={vesselCap}
                   onChange={(e) => setVesselCap(Number(e.target.value))}
-                  className="bg-slate-900/90 text-cyan-300 text-[10px] font-mono border border-slate-700/80 rounded-lg px-1.5 py-0.5 focus:outline-none cursor-pointer"
+                  className="bg-white text-sky-900 text-[10px] font-mono border border-slate-300 rounded-lg px-1.5 py-0.5 focus:outline-none cursor-pointer"
                   title="Maximum visible vessel markers rendered in current view"
                 >
                   <option value={500}>500 max</option>
@@ -731,11 +742,11 @@ export function LiveFleetMap() {
               className={clsx(
                 "hidden lg:flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all border",
                 showRoutes
-                  ? "bg-blue-500/20 text-blue-300 border-blue-500/40"
-                  : "text-slate-400 border-transparent hover:text-slate-200"
+                  ? "bg-indigo-50 text-indigo-800 border-indigo-300"
+                  : "text-slate-600 border-transparent hover:text-slate-900"
               )}
             >
-              <RouteIcon className="h-3 w-3 text-blue-400" />
+              <RouteIcon className="h-3 w-3 text-indigo-600" />
               <span>Lanes</span>
             </button>
 
@@ -744,11 +755,11 @@ export function LiveFleetMap() {
               className={clsx(
                 "hidden xl:flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all border",
                 showPorts
-                  ? "bg-sky-500/20 text-sky-300 border-sky-500/40"
-                  : "text-slate-400 border-transparent hover:text-slate-200"
+                  ? "bg-sky-50 text-sky-800 border-sky-300"
+                  : "text-slate-600 border-transparent hover:text-slate-900"
               )}
             >
-              <Anchor className="h-3 w-3 text-sky-400" />
+              <Anchor className="h-3 w-3 text-sky-600" />
               <span>Ports</span>
             </button>
 
@@ -757,8 +768,8 @@ export function LiveFleetMap() {
               className={clsx(
                 "flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all border",
                 showNauticalOverlay
-                  ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/40"
-                  : "text-slate-400 border-transparent hover:text-slate-200"
+                  ? "bg-violet-50 text-violet-800 border-violet-300"
+                  : "text-slate-600 border-transparent hover:text-slate-900"
               )}
               title="Toggle OpenSeaMap seamarks & buoys overlay"
             >
@@ -776,12 +787,12 @@ export function LiveFleetMap() {
               className={clsx(
                 "flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all duration-200 shadow-sm",
                 isRightDeckOpen
-                  ? "bg-slate-800 text-white border-slate-600"
-                  : "bg-slate-950 text-slate-400 border-slate-800 hover:text-white"
+                  ? "bg-slate-900 text-white border-slate-900"
+                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
               )}
               title="Toggle Route Solutions Intel Deck"
             >
-              <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+              <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
               <span className="hidden sm:inline">Solutions Deck</span>
               {isRightDeckOpen ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
             </button>
@@ -792,11 +803,11 @@ export function LiveFleetMap() {
             className={clsx(
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all duration-200 shadow-sm",
               showChart
-                ? "bg-slate-800 text-cyan-300 border-slate-600"
-                : "bg-slate-950 text-slate-400 border-slate-800 hover:text-white"
+                ? "bg-sky-50 text-sky-800 border-sky-300"
+                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
             )}
           >
-            <BarChart2 className="h-3.5 w-3.5 text-cyan-400" />
+            <BarChart2 className="h-3.5 w-3.5 text-sky-600" />
             <span className="hidden sm:inline">Telemetry</span>
           </button>
         </div>
@@ -809,7 +820,7 @@ export function LiveFleetMap() {
         <MapContainer
           center={[-20.2831, -40.2414]}
           zoom={4}
-          className="h-full w-full bg-[#060913]"
+          className="h-full w-full bg-slate-100"
           zoomControl={false}
           attributionControl={false}
         >
@@ -844,7 +855,7 @@ export function LiveFleetMap() {
               >
                 <Popup closeButton={false}>
                   <div className="text-xs space-y-1 p-0.5">
-                    <div className="font-bold text-emerald-400 flex items-center gap-1">
+                    <div className="font-bold text-emerald-600 flex items-center gap-1">
                       <Anchor className="h-3 w-3" /> Origin Port Terminal
                     </div>
                     <div className="font-bold text-slate-900">{selectedCandidate.origin.name}</div>
@@ -861,7 +872,7 @@ export function LiveFleetMap() {
               >
                 <Popup closeButton={false}>
                   <div className="text-xs space-y-1 p-0.5">
-                    <div className="font-bold text-amber-500 flex items-center gap-1">
+                    <div className="font-bold text-amber-600 flex items-center gap-1">
                       <Flag className="h-3 w-3" /> Destination Port Terminal
                     </div>
                     <div className="font-bold text-slate-900">{selectedCandidate.destination.name}</div>
@@ -897,9 +908,9 @@ export function LiveFleetMap() {
                 <Polyline
                   key={r.route_code}
                   positions={r.waypoints as [number, number][]}
-                  color="#334155"
+                  color="#94a3b8"
                   weight={2}
-                  opacity={0.35}
+                  opacity={0.45}
                   dashArray="4 4"
                 />
               );
@@ -918,14 +929,14 @@ export function LiveFleetMap() {
                       positions={cand.waypoints as [number, number][]}
                       color={cand.color}
                       weight={12}
-                      opacity={0.35}
+                      opacity={0.25}
                     />
                   )}
                   <Polyline
                     positions={cand.waypoints as [number, number][]}
                     color={cand.color}
                     weight={isSelected ? 5 : 3}
-                    opacity={isSelected ? 1.0 : 0.6}
+                    opacity={isSelected ? 1.0 : 0.65}
                     dashArray={cand.id === "weather-resilient" ? "6 6" : undefined}
                     eventHandlers={{
                       click: () => handleSelectCandidate(cand),
@@ -936,10 +947,10 @@ export function LiveFleetMap() {
                         <div className="flex items-center gap-1.5" style={{ color: cand.color }}>
                           <Sparkles className="h-3.5 w-3.5" /> {cand.title} {isSelected && "★ ACTIVE"}
                         </div>
-                        <div className="text-slate-200">
+                        <div className="text-slate-700">
                           Speed: {cand.speed_kn} kn | Fuel: {cand.fuel_tonnes} t | CO₂: {cand.lifecycle_co2e_tonnes} t
                         </div>
-                        <div className="text-emerald-400 font-mono">
+                        <div className="text-emerald-700 font-mono">
                           Voyage Cost: ${cand.total_cost_usd.toLocaleString()}
                         </div>
                       </div>
@@ -969,7 +980,7 @@ export function LiveFleetMap() {
                   <Popup closeButton={false}>
                     <div className="text-xs space-y-1 p-1">
                       <div className="font-bold text-slate-900 flex items-center gap-1">
-                        <Ship className="h-3.5 w-3.5 text-cyan-600" /> {v.name || `MMSI ${v.mmsi}`}
+                        <Ship className="h-3.5 w-3.5 text-sky-600" /> {v.name || `MMSI ${v.mmsi}`}
                       </div>
                       <div className="text-slate-600">
                         Speed: {v.speed_over_ground ?? 0} kn | Heading: {v.true_heading ?? 0}°
@@ -988,19 +999,19 @@ export function LiveFleetMap() {
         {isLeftDeckOpen && (
           <aside
             className={clsx(
-              "absolute top-4 left-4 z-[1001] w-88 max-w-[calc(100vw-2rem)] h-[calc(100%-2rem)] max-h-[700px] rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden transition-all duration-300",
+              "absolute top-4 left-4 z-[1001] w-88 max-w-[calc(100vw-2rem)] h-[calc(100%-2rem)] max-h-[700px] rounded-2xl shadow-xl flex flex-col overflow-hidden transition-all duration-300",
               themeConfig.bgPanel
             )}
           >
             {/* Mission Control Deck Header */}
-            <div className="flex items-center justify-between px-3 py-2.5 border-b border-slate-800 bg-slate-950/60">
+            <div className="flex items-center justify-between px-3 py-2.5 border-b border-slate-200 bg-slate-50/80">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className={clsx("h-4 w-4", themeConfig.text)} />
-                <span className="text-xs font-black tracking-wider uppercase text-white">Mission Control</span>
+                <span className="text-xs font-black tracking-wider uppercase text-slate-900">Mission Control</span>
               </div>
               <button
                 onClick={() => setIsLeftDeckOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition"
                 title="Collapse Panel"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -1008,17 +1019,17 @@ export function LiveFleetMap() {
             </div>
 
             {/* Deck Tab Switcher */}
-            <div className="flex items-center border-b border-slate-800 bg-slate-950/40 p-1.5 gap-1">
+            <div className="flex items-center border-b border-slate-200 bg-slate-100/70 p-1.5 gap-1">
               <button
                 onClick={() => setActiveSidebarTab("predictor")}
                 className={clsx(
                   "flex-1 py-1.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all",
                   activeSidebarTab === "predictor"
-                    ? "bg-slate-800 text-white shadow-sm border border-slate-700"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-white text-slate-900 shadow-sm border border-slate-200"
+                    : "text-slate-500 hover:text-slate-800"
                 )}
               >
-                <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
                 <span>Quantum Predictor</span>
               </button>
               <button
@@ -1026,29 +1037,29 @@ export function LiveFleetMap() {
                 className={clsx(
                   "flex-1 py-1.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all",
                   activeSidebarTab === "fleet"
-                    ? "bg-slate-800 text-white shadow-sm border border-slate-700"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-white text-slate-900 shadow-sm border border-slate-200"
+                    : "text-slate-500 hover:text-slate-800"
                 )}
               >
-                <Ship className="h-3.5 w-3.5 text-cyan-400" />
+                <Ship className="h-3.5 w-3.5 text-sky-600" />
                 <span>AIS Fleet</span>
-                <span className="text-[10px] px-1 rounded bg-slate-900 text-slate-300 font-mono">{vessels.length}</span>
+                <span className="text-[10px] px-1 rounded bg-slate-100 text-slate-600 font-mono border border-slate-200">{vessels.length}</span>
               </button>
             </div>
 
             {/* TAB 1: QUANTUM ROUTE PREDICTOR */}
             {activeSidebarTab === "predictor" && (
-              <div className="flex-1 overflow-y-auto p-3.5 space-y-3 scrollbar-thin scrollbar-thumb-slate-700">
+              <div className="flex-1 overflow-y-auto p-3.5 space-y-3 scrollbar-thin scrollbar-thumb-slate-300">
                 {/* Shipping Lane */}
                 <div>
-                  <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+                  <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
                     Origin / Destination Corridor
                   </label>
                   <select
                     value={predictRouteCode}
                     onChange={(e) => setPredictRouteCode(e.target.value)}
                     className={clsx(
-                      "w-full rounded-xl px-3 py-2 text-xs text-white focus:outline-none transition cursor-pointer border",
+                      "w-full rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none transition cursor-pointer border shadow-xs",
                       themeConfig.bgInput
                     )}
                   >
@@ -1063,43 +1074,43 @@ export function LiveFleetMap() {
                 </div>
 
                 {/* Live Ocean Weather HUD Card */}
-                <div className="bg-slate-950/80 rounded-xl p-2.5 border border-cyan-500/20 shadow-inner">
+                <div className="bg-sky-50/70 rounded-xl p-2.5 border border-sky-200 shadow-sm">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-black tracking-wider uppercase flex items-center gap-1.5 text-cyan-400">
-                      <Waves className="h-3.5 w-3.5 text-cyan-400" />
+                    <span className="text-[10px] font-black tracking-wider uppercase flex items-center gap-1.5 text-sky-800">
+                      <Waves className="h-3.5 w-3.5 text-sky-600" />
                       Live Ocean Waves & Weather
                     </span>
                     <button
                       type="button"
                       onClick={() => handleFetchRouteWeather(predictRouteCode)}
                       disabled={loadingWeather}
-                      className="text-[10px] text-slate-400 hover:text-cyan-300 flex items-center gap-1 transition"
+                      className="text-[10px] text-slate-500 hover:text-sky-700 flex items-center gap-1 transition"
                       title="Refresh Live Oceanographic Weather"
                     >
-                      <RefreshCw className={clsx("h-3 w-3", loadingWeather && "animate-spin text-cyan-400")} />
+                      <RefreshCw className={clsx("h-3 w-3", loadingWeather && "animate-spin text-sky-600")} />
                       <span>{loadingWeather ? "Syncing..." : "Sync"}</span>
                     </button>
                   </div>
 
                   {liveWeather?.summary ? (
                     <div className="grid grid-cols-3 gap-1.5 text-center">
-                      <div className="bg-slate-900/80 rounded-lg p-1 border border-slate-800">
-                        <div className="text-[9px] text-slate-400 uppercase font-mono">Wave (Hs)</div>
-                        <div className="text-xs font-bold text-white flex items-center justify-center gap-0.5">
-                          <Waves className="h-3 w-3 text-cyan-400" />
+                      <div className="bg-white rounded-lg p-1 border border-sky-100 shadow-xs">
+                        <div className="text-[9px] text-slate-500 uppercase font-mono">Wave (Hs)</div>
+                        <div className="text-xs font-bold text-slate-800 flex items-center justify-center gap-0.5">
+                          <Waves className="h-3 w-3 text-sky-600" />
                           {liveWeather.summary.avg_wave_height_m}m
                         </div>
                       </div>
-                      <div className="bg-slate-900/80 rounded-lg p-1 border border-slate-800">
-                        <div className="text-[9px] text-slate-400 uppercase font-mono">Wind</div>
-                        <div className="text-xs font-bold text-white flex items-center justify-center gap-0.5">
-                          <Wind className="h-3 w-3 text-emerald-400" />
+                      <div className="bg-white rounded-lg p-1 border border-sky-100 shadow-xs">
+                        <div className="text-[9px] text-slate-500 uppercase font-mono">Wind</div>
+                        <div className="text-xs font-bold text-slate-800 flex items-center justify-center gap-0.5">
+                          <Wind className="h-3 w-3 text-emerald-600" />
                           {liveWeather.summary.avg_wind_speed_kn} kn
                         </div>
                       </div>
-                      <div className="bg-slate-900/80 rounded-lg p-1 border border-slate-800">
-                        <div className="text-[9px] text-slate-400 uppercase font-mono">Sea State</div>
-                        <div className="text-[10px] font-extrabold text-cyan-300 uppercase">
+                      <div className="bg-white rounded-lg p-1 border border-sky-100 shadow-xs">
+                        <div className="text-[9px] text-slate-500 uppercase font-mono">Sea State</div>
+                        <div className="text-[10px] font-extrabold text-sky-700 uppercase">
                           {liveWeather.summary.dominant_sea_state}
                         </div>
                       </div>
@@ -1107,7 +1118,7 @@ export function LiveFleetMap() {
                   ) : (
                     <div className="text-[10px] text-slate-500 italic py-1 flex items-center justify-between">
                       <span>Fetching real-time Open-Meteo GFS wave spectra...</span>
-                      <CloudRain className="h-3 w-3 text-slate-600 animate-pulse" />
+                      <CloudRain className="h-3 w-3 text-slate-400 animate-pulse" />
                     </div>
                   )}
                 </div>
@@ -1115,14 +1126,14 @@ export function LiveFleetMap() {
                 {/* Vessel Class & Fuel Grid */}
                 <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+                    <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
                       Vessel Class
                     </label>
                     <select
                       value={predictVesselClass}
                       onChange={(e) => setPredictVesselClass(e.target.value)}
                       className={clsx(
-                        "w-full rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer border",
+                        "w-full rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none transition cursor-pointer border shadow-xs",
                         themeConfig.bgInput
                       )}
                     >
@@ -1132,14 +1143,14 @@ export function LiveFleetMap() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+                    <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
                       Fuel Type
                     </label>
                     <select
                       value={predictFuelType}
                       onChange={(e) => setPredictFuelType(e.target.value)}
                       className={clsx(
-                        "w-full rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer border",
+                        "w-full rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none transition cursor-pointer border shadow-xs",
                         themeConfig.bgInput
                       )}
                     >
@@ -1156,14 +1167,14 @@ export function LiveFleetMap() {
                 {/* Weather & Quantum Engine Grid */}
                 <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+                    <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
                       Sea State
                     </label>
                     <select
                       value={predictWeather}
                       onChange={(e) => setPredictWeather(e.target.value)}
                       className={clsx(
-                        "w-full rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer border",
+                        "w-full rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none transition cursor-pointer border shadow-xs",
                         themeConfig.bgInput
                       )}
                     >
@@ -1173,14 +1184,14 @@ export function LiveFleetMap() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+                    <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
                       Optimization Engine
                     </label>
                     <select
                       value={predictAlgorithm}
                       onChange={(e) => setPredictAlgorithm(e.target.value)}
                       className={clsx(
-                        "w-full rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer border",
+                        "w-full rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none transition cursor-pointer border shadow-xs",
                         themeConfig.bgInput
                       )}
                     >
@@ -1194,7 +1205,7 @@ export function LiveFleetMap() {
 
                 {/* Optimization Target Objective */}
                 <div>
-                  <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+                  <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
                     Primary Optimization Objective
                   </label>
                   <div className="grid grid-cols-2 gap-1.5">
@@ -1214,11 +1225,11 @@ export function LiveFleetMap() {
                           className={clsx(
                             "px-2.5 py-2 rounded-xl text-left border transition-all flex items-center gap-1.5 text-xs font-bold",
                             isSelected
-                              ? "bg-slate-800 text-white border-slate-600 shadow-md ring-1 " + themeConfig.ringColor
-                              : "bg-slate-950/70 border-slate-800 text-slate-400 hover:text-slate-200"
+                              ? "bg-sky-50 text-sky-900 border-sky-300 shadow-xs ring-1 " + themeConfig.ringColor
+                              : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                           )}
                         >
-                          <IconComp className={clsx("h-3.5 w-3.5", isSelected ? themeConfig.text : "text-slate-500")} />
+                          <IconComp className={clsx("h-3.5 w-3.5", isSelected ? themeConfig.text : "text-slate-400")} />
                           <span className="truncate">{item.label}</span>
                         </button>
                       );
@@ -1231,7 +1242,7 @@ export function LiveFleetMap() {
                   onClick={handleRunPrediction}
                   disabled={isPredicting}
                   className={clsx(
-                    "w-full mt-2 relative group overflow-hidden bg-gradient-to-r font-black py-2.5 px-4 rounded-xl shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-xs",
+                    "w-full mt-2 relative group overflow-hidden bg-gradient-to-r font-black py-2.5 px-4 rounded-xl shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-xs",
                     themeConfig.btnGradient
                   )}
                 >
@@ -1253,13 +1264,13 @@ export function LiveFleetMap() {
             {/* TAB 2: LIVE AIS FLEET TRACKER */}
             {activeSidebarTab === "fleet" && (
               <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="p-3 border-b border-slate-800 space-y-2">
-                  <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+                <div className="p-3 border-b border-slate-200 space-y-2">
+                  <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
                     <button
                       onClick={() => setActiveVesselFilter("live")}
                       className={clsx(
                         "flex-1 py-1 rounded-lg text-xs font-bold transition text-center",
-                        activeVesselFilter === "live" ? "bg-slate-800 text-white shadow-sm" : "text-slate-400"
+                        activeVesselFilter === "live" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
                       )}
                     >
                       Live ({vessels.length})
@@ -1268,7 +1279,7 @@ export function LiveFleetMap() {
                       onClick={() => setActiveVesselFilter("pinned")}
                       className={clsx(
                         "flex-1 py-1 rounded-lg text-xs font-bold transition text-center",
-                        activeVesselFilter === "pinned" ? "bg-slate-800 text-white shadow-sm" : "text-slate-400"
+                        activeVesselFilter === "pinned" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
                       )}
                     >
                       Pinned ({pinnedTrips.length})
@@ -1276,21 +1287,21 @@ export function LiveFleetMap() {
                   </div>
 
                   <div className="relative">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                     <input
                       type="text"
                       placeholder="Search by MMSI or vessel..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       className={clsx(
-                        "w-full pl-8 pr-3 py-1.5 text-xs rounded-xl text-white placeholder-slate-500 focus:outline-none border",
+                        "w-full pl-8 pr-3 py-1.5 text-xs rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none border shadow-xs",
                         themeConfig.bgInput
                       )}
                     />
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-700">
+                <div className="flex-1 overflow-y-auto p-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-300">
                   {activeVesselFilter === "pinned" ? (
                     pinnedTrips.map((trip) => {
                       const isSelected = selectedMmsi === trip.mmsi;
@@ -1301,19 +1312,19 @@ export function LiveFleetMap() {
                           className={clsx(
                             "flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer",
                             isSelected
-                              ? "bg-slate-800 border-cyan-400 shadow-md"
-                              : "bg-slate-950/60 border-slate-800/80 hover:bg-slate-800/50"
+                              ? "bg-sky-50 border-sky-400 shadow-sm"
+                              : "bg-white border-slate-200 hover:bg-slate-50"
                           )}
                         >
-                          <div className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0">
-                            <Ship className="h-4 w-4 text-cyan-400" />
+                          <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
+                            <Ship className="h-4 w-4 text-sky-600" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
-                              <span className="text-xs font-bold text-white truncate">{trip.name}</span>
-                              <span className="text-[10px] font-mono text-cyan-400">DEMO</span>
+                              <span className="text-xs font-bold text-slate-900 truncate">{trip.name}</span>
+                              <span className="text-[10px] font-mono text-sky-600 font-semibold">DEMO</span>
                             </div>
-                            <p className="text-[10px] text-slate-400 mt-0.5">{trip.date}</p>
+                            <p className="text-[10px] text-slate-500 mt-0.5">{trip.date}</p>
                           </div>
                         </div>
                       );
@@ -1328,27 +1339,27 @@ export function LiveFleetMap() {
                           className={clsx(
                             "flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer",
                             isSelected
-                              ? "bg-slate-800 border-cyan-400 shadow-md"
-                              : "bg-slate-950/60 border-slate-800/80 hover:bg-slate-800/50"
+                              ? "bg-sky-50 border-sky-400 shadow-sm"
+                              : "bg-white border-slate-200 hover:bg-slate-50"
                           )}
                         >
-                          <div className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0">
-                            <Ship className={clsx("h-4 w-4", vessel.status === "LIVE" ? "text-cyan-400" : "text-slate-400")} />
+                          <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
+                            <Ship className={clsx("h-4 w-4", vessel.status === "LIVE" ? "text-sky-600" : "text-slate-400")} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
-                              <span className="text-xs font-bold text-white truncate">
+                              <span className="text-xs font-bold text-slate-900 truncate">
                                 {vessel.name || `MMSI ${vessel.mmsi}`}
                               </span>
                               {vessel.status === "LIVE" && (
-                                <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
+                                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                               )}
                             </div>
-                            <div className="flex items-center justify-between text-[10px] text-slate-400 mt-1">
-                              <span className="font-mono text-slate-200">
+                            <div className="flex items-center justify-between text-[10px] text-slate-500 mt-1">
+                              <span className="font-mono text-slate-700 font-medium">
                                 {vessel.speed_over_ground != null ? `${vessel.speed_over_ground} kn` : "0 kn"}
                               </span>
-                              <span className="font-mono text-[9px] text-slate-500">
+                              <span className="font-mono text-[9px] text-slate-400">
                                 {vessel.latitude != null ? `${vessel.latitude.toFixed(2)}°, ${vessel.longitude?.toFixed(2)}°` : "No GPS"}
                               </span>
                             </div>
@@ -1363,19 +1374,43 @@ export function LiveFleetMap() {
           </aside>
         )}
 
+        {!isLeftDeckOpen && (
+          <button
+            onClick={() => setIsLeftDeckOpen(true)}
+            className="absolute top-4 left-4 z-[1001] flex items-center gap-2 px-3 py-2 rounded-xl bg-white/95 backdrop-blur border border-slate-200 text-slate-800 font-bold text-xs shadow-lg hover:bg-slate-50 transition-all duration-200"
+            title="Open Mission Control"
+          >
+            <SlidersHorizontal className={clsx("h-3.5 w-3.5", themeConfig.text)} />
+            <span>Mission Control</span>
+            <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
+          </button>
+        )}
+
         {/* ─── 4. RIGHT ROUTE INTELLIGENCE & EVALUATED CANDIDATE SOLUTIONS DECK ─ */}
+        {!isRightDeckOpen && selectedCandidate && (
+          <button
+            onClick={() => setIsRightDeckOpen(true)}
+            className="absolute top-4 right-4 z-[1001] flex items-center gap-2 px-3 py-2 rounded-xl bg-white/95 backdrop-blur border border-slate-200 text-slate-800 font-bold text-xs shadow-lg hover:bg-slate-50 transition-all duration-200"
+            title="Open Solutions Deck"
+          >
+            <ChevronLeft className="h-3.5 w-3.5 text-slate-400" />
+            <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+            <span>Solutions Deck</span>
+          </button>
+        )}
+
         {isRightDeckOpen && selectedCandidate && (
           <aside
             className={clsx(
-              "absolute top-4 right-4 z-[1001] w-96 max-w-[calc(100vw-2rem)] max-h-[calc(100%-2rem)] rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden transition-all duration-300",
+              "absolute top-4 right-4 z-[1001] w-96 max-w-[calc(100vw-2rem)] max-h-[calc(100%-2rem)] rounded-2xl shadow-xl flex flex-col overflow-hidden transition-all duration-300",
               themeConfig.bgPanel
             )}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-800 bg-slate-950/60">
+            <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-200 bg-slate-50/80">
               <div className="flex items-center gap-2">
                 <span className="h-3 w-3 rounded-full shadow-md shrink-0" style={{ backgroundColor: selectedCandidate.color }} />
-                <h4 className="font-black text-white text-xs tracking-wide truncate">{selectedCandidate.title}</h4>
+                <h4 className="font-black text-slate-900 text-xs tracking-wide truncate">{selectedCandidate.title}</h4>
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
                 <button
@@ -1384,14 +1419,14 @@ export function LiveFleetMap() {
                       setTargetRouteBounds(selectedCandidate.waypoints);
                     }
                   }}
-                  className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 flex items-center gap-1 transition"
+                  className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 flex items-center gap-1 transition shadow-xs"
                   title="Fit view to route"
                 >
                   <Maximize2 className="h-3 w-3" /> Focus
                 </button>
                 <button
                   onClick={() => setIsRightDeckOpen(false)}
-                  className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+                  className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition"
                   title="Minimize Panel"
                 >
                   <Minimize2 className="h-3.5 w-3.5" />
@@ -1399,48 +1434,48 @@ export function LiveFleetMap() {
               </div>
             </div>
 
-            <div className="p-3.5 space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700">
+            <div className="p-3.5 space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300">
               {/* Fitness score & Rank Banner */}
-              <div className="flex items-center justify-between bg-slate-950/80 px-3 py-2 rounded-xl border border-slate-800">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-slate-400">Quantum Fitness</span>
-                <span className="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-lg text-xs font-black border border-emerald-500/40">
+              <div className="flex items-center justify-between bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
+                <span className="text-[10px] uppercase tracking-wider font-bold text-slate-600">Quantum Fitness</span>
+                <span className="bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-lg text-xs font-black border border-emerald-300">
                   {(selectedCandidate.quantum_fitness * 100).toFixed(1)}% Optimal
                 </span>
               </div>
 
               {/* Metrics Matrix */}
-              <div className="grid grid-cols-2 gap-2 bg-slate-950/90 p-2.5 rounded-xl border border-slate-800">
+              <div className="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                 <div className="space-y-0.5">
-                  <span className="text-slate-400 block text-[10px] uppercase tracking-wider font-bold">Total Cost</span>
-                  <span className="text-sm font-black text-emerald-400">${selectedCandidate.total_cost_usd.toLocaleString()}</span>
+                  <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-bold">Total Cost</span>
+                  <span className="text-sm font-black text-emerald-700">${selectedCandidate.total_cost_usd.toLocaleString()}</span>
                 </div>
                 <div className="space-y-0.5">
-                  <span className="text-slate-400 block text-[10px] uppercase tracking-wider font-bold">Lifecycle CO₂</span>
-                  <span className="text-sm font-black text-cyan-400">{selectedCandidate.lifecycle_co2e_tonnes.toLocaleString()} MT</span>
+                  <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-bold">Lifecycle CO₂</span>
+                  <span className="text-sm font-black text-sky-700">{selectedCandidate.lifecycle_co2e_tonnes.toLocaleString()} MT</span>
                 </div>
                 <div className="space-y-0.5">
-                  <span className="text-slate-400 block text-[10px] uppercase tracking-wider font-bold">Fuel Burned</span>
-                  <span className="text-xs font-bold text-slate-200">
+                  <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-bold">Fuel Burned</span>
+                  <span className="text-xs font-bold text-slate-800">
                     {selectedCandidate.fuel_tonnes.toLocaleString()} t ({selectedCandidate.fuel_type})
                   </span>
                 </div>
                 <div className="space-y-0.5">
-                  <span className="text-slate-400 block text-[10px] uppercase tracking-wider font-bold">Transit Time</span>
-                  <span className="text-xs font-bold text-slate-200">
+                  <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-bold">Transit Time</span>
+                  <span className="text-xs font-bold text-slate-800">
                     {selectedCandidate.voyage_hours} hrs ({(selectedCandidate.voyage_hours / 24).toFixed(1)} d)
                   </span>
                 </div>
               </div>
 
               {/* AI Optimization Rationale */}
-              <div className="text-[11px] text-slate-300 italic bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80 leading-relaxed">
+              <div className="text-[11px] text-slate-700 italic bg-sky-50/50 p-2.5 rounded-xl border border-sky-100 leading-relaxed">
                 💡 "{selectedCandidate.explanation}"
               </div>
 
               {/* All 5 Evaluated Candidate Solutions Selector */}
               {predictedCandidates.length > 1 && (
                 <div className="space-y-1.5 pt-1">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
                     All Evaluated Candidate Solutions
                   </span>
                   <div className="space-y-1">
@@ -1453,24 +1488,24 @@ export function LiveFleetMap() {
                           className={clsx(
                             "p-2 rounded-xl border transition-all cursor-pointer flex items-center justify-between text-xs",
                             isSel
-                              ? "bg-slate-800 text-white border-cyan-400 shadow-md"
-                              : "bg-slate-950/80 text-slate-300 border-slate-800 hover:bg-slate-900 hover:border-slate-700"
+                              ? "bg-sky-50 text-slate-900 border-sky-400 shadow-sm"
+                              : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                           )}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
                             <div className="min-w-0">
                               <span className="font-bold block truncate">{c.title}</span>
-                              <span className="text-[10px] text-slate-400 font-mono">
+                              <span className="text-[10px] text-slate-500 font-mono">
                                 {c.speed_kn} kn • {c.fuel_tonnes} t fuel
                               </span>
                             </div>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className="font-black text-emerald-400 block text-xs">
+                            <span className="font-black text-emerald-700 block text-xs">
                               ${(c.total_cost_usd / 1000).toFixed(0)}k
                             </span>
-                            <span className="text-[9px] text-cyan-300 font-mono">
+                            <span className="text-[9px] text-sky-700 font-mono">
                               {c.lifecycle_co2e_tonnes} MT
                             </span>
                           </div>
@@ -1485,36 +1520,36 @@ export function LiveFleetMap() {
         )}
 
         {/* ─── 5. FLOATING MAP LEGEND (BOTTOM LEFT) ───────────────────────────── */}
-        <div className="absolute bottom-4 left-4 z-[1000] p-3 rounded-2xl bg-slate-950/85 backdrop-blur-xl border border-slate-800 shadow-xl space-y-2 max-w-[280px]">
-          <div className="font-bold text-slate-200 text-xs border-b border-slate-800 pb-1.5 flex items-center justify-between">
+        <div className="absolute bottom-4 left-4 z-[1000] p-3 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200 shadow-xl space-y-2 max-w-[280px]">
+          <div className="font-bold text-slate-800 text-xs border-b border-slate-200 pb-1.5 flex items-center justify-between">
             <span className="flex items-center gap-1.5">
-              <Layers className="h-3.5 w-3.5 text-cyan-400" /> Maritime Legend
+              <Layers className="h-3.5 w-3.5 text-sky-600" /> Maritime Legend
             </span>
-            <span className="text-[9px] text-emerald-400 font-mono">Real Maritime Lanes</span>
+            <span className="text-[9px] text-emerald-600 font-mono font-semibold">Real Maritime Lanes</span>
           </div>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-slate-300 text-[10px]">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-slate-600 text-[10px]">
             <div className="flex items-center gap-1.5">
-              <span className="h-2 w-3 rounded-sm bg-[#10B981] shadow-sm shadow-emerald-500/50" />
+              <span className="h-2 w-3 rounded-sm bg-[#10B981] shadow-xs" />
               <span>Recommended</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="h-2 w-3 rounded-sm bg-[#8B5CF6] shadow-sm shadow-purple-500/50" />
+              <span className="h-2 w-3 rounded-sm bg-[#8B5CF6] shadow-xs" />
               <span>Min Emissions</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="h-2 w-3 rounded-sm bg-[#06B6D4] shadow-sm shadow-cyan-500/50" />
+              <span className="h-2 w-3 rounded-sm bg-[#06B6D4] shadow-xs" />
               <span>Min Cost Plan</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="h-2 w-3 rounded-sm bg-[#F59E0B] shadow-sm shadow-amber-500/50" />
+              <span className="h-2 w-3 rounded-sm bg-[#F59E0B] shadow-xs" />
               <span>Fast Express</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="h-2 w-2 rounded-full bg-sky-500 animate-pulse" />
               <span>Live AIS Ship</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-sky-400" />
+              <span className="h-2 w-2 rounded-full bg-sky-600" />
               <span>Seaport</span>
             </div>
           </div>
@@ -1522,32 +1557,32 @@ export function LiveFleetMap() {
 
         {/* ─── 6. BOTTOM TELEMETRY CONSOLE DRAWER ────────────────────────────── */}
         {showChart && (
-          <div className="absolute bottom-0 left-0 right-0 z-[1002] h-48 bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 flex flex-col px-4 py-2 text-xs shadow-2xl transition-all duration-300">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1">
+          <div className="absolute bottom-0 left-0 right-0 z-[1002] h-48 bg-white/95 backdrop-blur-xl border-t border-slate-200 flex flex-col px-4 py-2 text-xs shadow-2xl transition-all duration-300">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 mb-1">
               <div className="flex items-center gap-3">
-                <span className="font-black text-slate-200 flex items-center gap-1.5 text-xs tracking-wider uppercase">
-                  <Activity className="h-3.5 w-3.5 text-cyan-400" /> SOG & Dynamic Wave Impact Telemetry
+                <span className="font-black text-slate-800 flex items-center gap-1.5 text-xs tracking-wider uppercase">
+                  <Activity className="h-3.5 w-3.5 text-sky-600" /> SOG & Dynamic Wave Impact Telemetry
                 </span>
                 <div className="flex items-center gap-2 text-[11px]">
-                  <span className="flex items-center gap-1 font-semibold text-cyan-400">
-                    <span className="h-2 w-2 rounded-full bg-cyan-400" /> Speed (kn)
+                  <span className="flex items-center gap-1 font-semibold text-sky-600">
+                    <span className="h-2 w-2 rounded-full bg-sky-500" /> Speed (kn)
                   </span>
-                  <span className="flex items-center gap-1 font-semibold text-amber-400">
-                    <span className="h-2 w-2 rounded-full bg-amber-400" /> Impact Force 2
+                  <span className="flex items-center gap-1 font-semibold text-amber-600">
+                    <span className="h-2 w-2 rounded-full bg-amber-500" /> Impact Force 2
                   </span>
-                  <span className="flex items-center gap-1 font-semibold text-emerald-400">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400" /> Impact Force 1
+                  <span className="flex items-center gap-1 font-semibold text-emerald-600">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" /> Impact Force 1
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-slate-400">
-                <span className="bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded text-[11px] font-mono">
+              <div className="flex items-center gap-2 text-slate-500">
+                <span className="bg-slate-100 border border-slate-200 text-slate-700 px-2 py-0.5 rounded text-[11px] font-mono">
                   Real-Time Dynamic Series
                 </span>
                 <button
                   onClick={() => setShowChart(false)}
-                  className="hover:text-white bg-slate-900 border border-slate-800 p-1 rounded hover:bg-slate-800 transition"
+                  className="hover:text-slate-900 bg-white border border-slate-200 p-1 rounded hover:bg-slate-100 transition"
                   title="Close Telemetry Drawer"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -1558,16 +1593,16 @@ export function LiveFleetMap() {
             <div className="flex-1 w-full min-h-0">
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={telemetryData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid stroke="#1E293B" strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid stroke="#e2e8f0" strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="time" stroke="#64748B" tick={{ fontSize: 10 }} />
-                  <YAxis yAxisId="left" stroke="#38BDF8" tick={{ fontSize: 10 }} domain={[0, 40]} />
-                  <YAxis yAxisId="right" orientation="right" stroke="#F59E0B" tick={{ fontSize: 10 }} domain={[0, 4]} />
+                  <YAxis yAxisId="left" stroke="#0284c7" tick={{ fontSize: 10 }} domain={[0, 40]} />
+                  <YAxis yAxisId="right" orientation="right" stroke="#d97706" tick={{ fontSize: 10 }} domain={[0, 4]} />
                   <RechartsTooltip
-                    contentStyle={{ backgroundColor: "#090D16", borderColor: "#334155", borderRadius: 8, fontSize: 12 }}
+                    contentStyle={{ backgroundColor: "#ffffff", borderColor: "#e2e8f0", color: "#0f172a", borderRadius: 8, fontSize: 12, boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
                   />
                   <Bar yAxisId="right" dataKey="impact1" fill="#10B981" opacity={0.65} stackId="a" />
                   <Bar yAxisId="right" dataKey="impact2" fill="#F59E0B" opacity={0.75} stackId="a" />
-                  <Line yAxisId="left" type="monotone" dataKey="sog" stroke="#06B6D4" strokeWidth={2.5} dot={false} />
+                  <Line yAxisId="left" type="monotone" dataKey="sog" stroke="#0284c7" strokeWidth={2.5} dot={false} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>

@@ -144,7 +144,7 @@ export function PortContracts() {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="font-display text-xl font-semibold text-slate-ink">Port Contract Management</h1>
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30">
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
               SCENARIO DATA
             </span>
           </div>
@@ -167,16 +167,18 @@ export function PortContracts() {
 
       {/* Contract Penalty Calculator & Provenance Notice */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 glass-panel rounded-xl p-5 border border-slate-line/50 flex flex-col gap-4">
-          <div className="flex items-center justify-between">
+        <div className="lg:col-span-2 rounded-2xl p-6 border border-slate-200/90 shadow-xs flex flex-col gap-4 bg-white">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
-              <Calculator className="h-5 w-5 text-signal" />
-              <h2 className="text-sm font-semibold text-slate-ink">Contract Penalty &amp; Demurrage Calculator</h2>
+              <Calculator className="h-4 w-4 text-sky-600" />
+              <h2 className="text-xs font-black text-slate-800 uppercase tracking-wider">Demurrage &amp; Penalty Calculator</h2>
             </div>
-            <span className="text-xs text-slate-body">Real-time Financial Exposure</span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+              Financial Exposure
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <Field label="Target Contract">
               <Select
                 value={selectedCalcContract?.id ?? ""}
@@ -190,70 +192,71 @@ export function PortContracts() {
               </Select>
             </Field>
 
-            <Field label="Delay Duration (Days)">
+            <Field label="Delay Duration">
               <Input
                 type="number"
                 min="0"
                 step="0.5"
                 value={calcDelayDays}
                 onChange={(e) => setCalcDelayDays(Number(e.target.value))}
+                suffix="days"
               />
             </Field>
 
             <div className="flex flex-col justify-end">
-              <div className="p-3 bg-navy-50/70 border border-slate-line/50 rounded-lg">
-                <span className="text-xs text-slate-body block">Total Calculated Penalty</span>
-                <span className="text-lg font-bold text-danger">{fmtUsd(calcTotalPenalty)}</span>
+              <div className="p-3 bg-red-50/70 border border-red-200 rounded-xl">
+                <span className="text-[10px] uppercase font-mono font-bold text-red-600 block">Calculated Demurrage</span>
+                <span className="text-base font-extrabold text-red-700 font-mono">{fmtUsd(calcTotalPenalty)}</span>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs border-t border-slate-line/50 pt-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs border-t border-slate-100 pt-3">
             <div>
-              <span className="text-slate-body">Daily Rate:</span>{" "}
-              <strong className="text-slate-ink">{fmtUsd(penaltyPerDay)}/day</strong>
+              <span className="text-slate-400 block text-[10px] uppercase font-mono">Daily Rate:</span>
+              <strong className="text-slate-800 font-bold">{fmtUsd(penaltyPerDay)}/day</strong>
             </div>
             <div>
-              <span className="text-slate-body">Penalty per Cargo Tonne:</span>{" "}
-              <strong className="text-slate-ink">${calcCostPerTonne.toFixed(2)}/t</strong>
+              <span className="text-slate-400 block text-[10px] uppercase font-mono">Penalty / Cargo Tonne:</span>
+              <strong className="text-slate-800 font-bold">${calcCostPerTonne.toFixed(2)}/t</strong>
             </div>
             <div>
-              <span className="text-slate-body">Laycan Window:</span>{" "}
-              <strong className="text-slate-ink">
+              <span className="text-slate-400 block text-[10px] uppercase font-mono">Laycan Window:</span>
+              <strong className="text-slate-800 font-bold">
                 {selectedCalcContract?.laycan_start} → {selectedCalcContract?.laycan_end}
               </strong>
             </div>
             <div>
-              <span className="text-slate-body">Risk Level:</span>{" "}
-              <span className={`font-semibold ${calcDelayDays > 4 ? "text-danger" : calcDelayDays > 0 ? "text-amber-400" : "text-positive"}`}>
-                {calcDelayDays > 4 ? "CRITICAL BREACH" : calcDelayDays > 0 ? "PENALTY APPLIED" : "ON TIME"}
+              <span className="text-slate-400 block text-[10px] uppercase font-mono">Risk Status:</span>
+              <span className={`font-bold font-mono text-[11px] ${calcDelayDays > 4 ? "text-red-600" : calcDelayDays > 0 ? "text-amber-600" : "text-emerald-600"}`}>
+                {calcDelayDays > 4 ? "CRITICAL BREACH" : calcDelayDays > 0 ? "PENALTY ACTIVE" : "ON SCHEDULE"}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="glass-panel rounded-xl p-5 border border-amber-500/20 bg-amber-500/5 flex flex-col justify-between text-xs text-slate-body">
+        <div className="rounded-2xl p-6 border border-amber-200 bg-amber-50/60 shadow-xs flex flex-col justify-between text-xs text-amber-900">
           <div>
-            <div className="flex items-center gap-2 text-amber-400 font-semibold mb-2">
-              <AlertTriangle className="h-4 w-4" />
+            <div className="flex items-center gap-2 font-bold mb-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
               <span>Commercial Scenario Provenance</span>
             </div>
-            <p className="leading-relaxed">
+            <p className="leading-relaxed text-[11px] text-amber-900/90">
               All port contracts, freight charter commitments, and arrival dates in this view are labeled as <strong>SCENARIO</strong> data.
             </p>
-            <p className="mt-2 leading-relaxed">
+            <p className="mt-2 leading-relaxed text-[11px] text-amber-900/90">
               They are utilized by the <strong>QGA / QPSO</strong> optimization engines to weigh fuel &amp; carbon reduction against contractual delay penalties (${"penalty"} &times; ${"delay_days"}$).
             </p>
           </div>
-          <div className="mt-3 text-[11px] text-slate-400 border-t border-amber-500/20 pt-2">
+          <div className="mt-3 text-[10px] font-mono text-amber-800 border-t border-amber-200/80 pt-2">
             Status: Simulation Engine Ready
           </div>
         </div>
       </div>
 
       {/* Filter Toolbar */}
-      <div className="glass-panel rounded-xl p-4 flex flex-wrap items-end gap-3">
-        <div className="flex-1 min-w-[200px]">
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 flex flex-wrap items-end gap-3.5">
+        <div className="flex-1 min-w-[220px]">
           <Field label="Search Contracts">
             <Input
               type="text"
@@ -318,11 +321,11 @@ export function PortContracts() {
               </thead>
               <tbody>
                 {filtered.map((c) => (
-                  <tr key={c.id} className="border-b border-slate-line/50 hover:bg-white/5 transition-colors">
+                  <tr key={c.id} className="border-b border-slate-line/50 hover:bg-slate-50 transition-colors">
                     <td className="py-2.5 pr-3 font-medium text-slate-ink">
                       <div className="flex items-center gap-1.5">
                         <span>{c.contract_code}</span>
-                        <span className="text-[9px] px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono">
+                        <span className="text-[9px] px-1 py-0.2 rounded bg-amber-50 text-amber-700 border border-amber-200 font-mono">
                           SCENARIO
                         </span>
                       </div>
@@ -332,9 +335,9 @@ export function PortContracts() {
                       {c.origin_port} → {c.destination_port}
                     </td>
                     <td className="py-2.5 pr-3 tabular text-right font-medium text-slate-ink">
-                      {fmtNum(c.cargo_quantity_tonnes)} <span className="text-xs text-slate-400 font-normal">({c.cargo_type})</span>
+                      {fmtNum(c.cargo_quantity_tonnes)} <span className="text-xs text-slate-500 font-normal">({c.cargo_type})</span>
                     </td>
-                    <td className="py-2.5 pr-3 tabular text-right">
+                    <td className="py-2.5 pr-3 tabular text-right text-slate-700">
                       {c.required_arrival_days} days
                     </td>
                     <td className="py-2.5 pr-3 text-xs text-slate-body">
@@ -345,12 +348,12 @@ export function PortContracts() {
                     </td>
                     <td className="py-2.5 pr-3">
                       <span
-                        className={`text-xs px-2 py-0.5 rounded font-medium ${
+                        className={`text-xs px-2 py-0.5 rounded font-medium border ${
                           c.priority === "Urgent"
-                            ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                            ? "bg-red-50 text-red-700 border-red-200"
                             : c.priority === "High"
-                            ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                            : "bg-slate-500/20 text-slate-300 border border-slate-500/30"
+                            ? "bg-amber-50 text-amber-700 border-amber-200"
+                            : "bg-slate-100 text-slate-700 border-slate-200"
                         }`}
                       >
                         {c.priority}
@@ -361,14 +364,14 @@ export function PortContracts() {
                     </td>
                     <td className="py-2.5 pr-3">
                       <span
-                        className={`text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1 w-fit ${
+                        className={`text-xs px-2 py-0.5 rounded font-medium border flex items-center gap-1 w-fit ${
                           c.status === "Active"
-                            ? "bg-signal/20 text-signal border border-signal/30"
+                            ? "bg-sky-50 text-sky-700 border-sky-200"
                             : c.status === "Fulfilled"
-                            ? "bg-positive/20 text-positive border border-positive/30"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                             : c.status === "Breached"
-                            ? "bg-danger/20 text-danger border border-danger/30"
-                            : "bg-slate-500/20 text-slate-400 border border-slate-500/30"
+                            ? "bg-red-50 text-red-700 border-red-200"
+                            : "bg-slate-100 text-slate-600 border-slate-200"
                         }`}
                       >
                         {c.status === "Active" && <CheckCircle2 className="h-3 w-3" />}
@@ -380,14 +383,14 @@ export function PortContracts() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => openEditModal(c)}
-                          className="p-1 hover:bg-white/10 rounded text-slate-body hover:text-signal transition-colors"
+                          className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-signal transition-colors"
                           title="Edit contract"
                         >
                           <Edit2 className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => handleDelete(c.id)}
-                          className="p-1 hover:bg-white/10 rounded text-slate-body hover:text-danger transition-colors"
+                          className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-danger transition-colors"
                           title="Delete contract"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -404,15 +407,15 @@ export function PortContracts() {
 
       {/* Modal Dialog */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-navy-900 border border-slate-line/70 rounded-2xl max-w-xl w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-line/50">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-line rounded-2xl max-w-xl w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-line">
               <h3 className="text-base font-semibold text-slate-ink">
                 {editingContract ? "Edit Port Contract" : "Create Port Contract (Scenario)"}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white text-sm"
+                className="text-slate-400 hover:text-slate-700 text-sm p-1 rounded-lg hover:bg-slate-100"
               >
                 ✕
               </button>

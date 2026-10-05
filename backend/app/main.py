@@ -10,8 +10,16 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
+from pathlib import Path
+
 try:
     from dotenv import load_dotenv
+    _backend_env = Path(__file__).resolve().parents[1] / ".env"
+    _root_env = Path(__file__).resolve().parents[2] / ".env"
+    if _backend_env.exists():
+        load_dotenv(_backend_env)
+    if _root_env.exists():
+        load_dotenv(_root_env)
     load_dotenv()
 except ImportError:
     pass
@@ -65,10 +73,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="GreenFleet Quantum API",
+    title="VATES Quantum Fleet API",
     description=(
-        "Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization "
-        "(SIH PS-138).\n\n"
+        "Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization Platform.\n\n"
         "**Compute note:** all optimisation runs quantum-INSPIRED metaheuristics on "
         "classical hardware. No quantum computer is used.\n\n"
         "**Data note:** the bundled dataset is a demo dataset generated for simulation "
@@ -126,9 +133,9 @@ async def unhandled_handler(request: Request, exc: Exception):
 @app.get("/", tags=["system"])
 def root() -> dict:
     return {
-        "name": "GREENFLEET QUANTUM",
+        "name": "VATES",
         "tagline": "Predict. Optimize. Decarbonize.",
-        "problem_statement": "PS-138 - Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization",
+        "platform": "VATES - Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization",
         "docs": "/docs",
         "compute": "Quantum-inspired algorithms on classical hardware. No quantum computer is used.",
     }

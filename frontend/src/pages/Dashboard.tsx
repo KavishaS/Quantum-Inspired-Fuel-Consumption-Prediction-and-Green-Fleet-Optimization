@@ -16,9 +16,14 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/Controls";
 
 const FUEL_COLORS: Record<string, string> = {
-  HFO: "#38bdf8", MGO: "#0ea5e9", LNG: "#8b5cf6", METHANOL: "#10b981",
-  AMMONIA: "#f59e0b", HYDROGEN: "#ef4444",
+  HFO: "#0284c7", MGO: "#0ea5e9", LNG: "#8b5cf6", METHANOL: "#059669",
+  AMMONIA: "#d97706", HYDROGEN: "#dc2626",
 };
+
+/* Shared chart axis/grid styling for light theme */
+const GRID_STROKE = "#e2e8f0";
+const TICK_STYLE = { fontSize: 11, fill: "#64748b" };
+const AXIS_STROKE = "#e2e8f0";
 
 export function Dashboard() {
   const { data, loading, error, reload } = useAsync(getDashboard);
@@ -34,10 +39,10 @@ export function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="font-display text-xl font-semibold text-slate-ink">Executive Dashboard</h1>
-          <p className="text-sm text-slate-body mt-0.5">{data.data_notice}</p>
+          <h1 className="font-display text-xl font-semibold text-slate-800">Executive Dashboard</h1>
+          <p className="text-sm text-slate-400 mt-0.5">{data.data_notice}</p>
         </div>
         <StatusBadge label={k.compliance_status} tone={complianceTone(k.compliance_status)} />
       </div>
@@ -60,15 +65,15 @@ export function Dashboard() {
             <AreaChart data={data.trends}>
               <defs>
                 <linearGradient id="fuelGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#0ea5e9" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#0284c7" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#0284c7" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid stroke="#27272a" vertical={false} />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={{ stroke: "#27272a" }} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} width={44} />
+              <CartesianGrid stroke={GRID_STROKE} vertical={false} />
+              <XAxis dataKey="month" tick={TICK_STYLE} axisLine={{ stroke: AXIS_STROKE }} tickLine={false} />
+              <YAxis tick={TICK_STYLE} axisLine={false} tickLine={false} width={44} />
               <Tooltip formatter={(v: number) => [`${fmtNum(v)} t`, "Fuel"]} />
-              <Area type="monotone" dataKey="fuel_tonnes" stroke="#0ea5e9" fill="url(#fuelGrad)" strokeWidth={2} />
+              <Area type="monotone" dataKey="fuel_tonnes" stroke="#0284c7" fill="url(#fuelGrad)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -78,15 +83,15 @@ export function Dashboard() {
             <AreaChart data={data.trends}>
               <defs>
                 <linearGradient id="co2Grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#f59e0b" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#d97706" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#d97706" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid stroke="#27272a" vertical={false} />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={{ stroke: "#27272a" }} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} width={44} />
+              <CartesianGrid stroke={GRID_STROKE} vertical={false} />
+              <XAxis dataKey="month" tick={TICK_STYLE} axisLine={{ stroke: AXIS_STROKE }} tickLine={false} />
+              <YAxis tick={TICK_STYLE} axisLine={false} tickLine={false} width={44} />
               <Tooltip formatter={(v: number) => [`${fmtNum(v)} t`, "CO2e"]} />
-              <Area type="monotone" dataKey="co2e_tonnes" stroke="#f59e0b" fill="url(#co2Grad)" strokeWidth={2} />
+              <Area type="monotone" dataKey="co2e_tonnes" stroke="#d97706" fill="url(#co2Grad)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -94,12 +99,12 @@ export function Dashboard() {
         <ChartCard title="Fuel Cost Trend" subtitle="Estimated monthly spend">
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={data.trends}>
-              <CartesianGrid stroke="#27272a" vertical={false} />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={{ stroke: "#27272a" }} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} width={50}
+              <CartesianGrid stroke={GRID_STROKE} vertical={false} />
+              <XAxis dataKey="month" tick={TICK_STYLE} axisLine={{ stroke: AXIS_STROKE }} tickLine={false} />
+              <YAxis tick={TICK_STYLE} axisLine={false} tickLine={false} width={50}
                      tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
               <Tooltip formatter={(v: number) => [fmtUsd(v), "Cost"]} />
-              <Bar dataKey="cost_usd" fill="#8b5cf6" radius={[2, 2, 0, 0]} />
+              <Bar dataKey="cost_usd" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -110,14 +115,14 @@ export function Dashboard() {
           <ResponsiveContainer width="100%" height={220}>
             <PieChart>
               <Pie data={data.fuel_mix} dataKey="tonnes" nameKey="fuel" innerRadius={50} outerRadius={80} paddingAngle={2}>
-                {data.fuel_mix.map((f) => <Cell key={f.fuel} fill={FUEL_COLORS[f.fuel] || "#a1a1aa"} />)}
+                {data.fuel_mix.map((f) => <Cell key={f.fuel} fill={FUEL_COLORS[f.fuel] || "#94a3b8"} />)}
               </Pie>
               <Tooltip formatter={(v: number, _n, p: any) => [`${fmtNum(v)} t (${p.payload.share_pct.toFixed(1)}%)`, p.payload.fuel]} />
             </PieChart>
           </ResponsiveContainer>
           <div className="flex flex-wrap gap-2 mt-1">
             {data.fuel_mix.map((f) => (
-              <span key={f.fuel} className="flex items-center gap-1.5 text-xs text-slate-body">
+              <span key={f.fuel} className="flex items-center gap-1.5 text-xs text-slate-500">
                 <span className="h-2 w-2 rounded-full" style={{ background: FUEL_COLORS[f.fuel] }} />
                 {f.fuel} {f.share_pct.toFixed(0)}%
               </span>
@@ -128,11 +133,11 @@ export function Dashboard() {
         <ChartCard title="Vessel-Type Distribution" subtitle="Fuel share by class">
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={data.class_mix} layout="vertical" margin={{ left: 8 }}>
-              <CartesianGrid stroke="#27272a" horizontal={false} />
-              <XAxis type="number" tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="vessel_class" tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} width={90} />
+              <CartesianGrid stroke={GRID_STROKE} horizontal={false} />
+              <XAxis type="number" tick={TICK_STYLE} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="vessel_class" tick={TICK_STYLE} axisLine={false} tickLine={false} width={90} />
               <Tooltip formatter={(v: number) => [`${fmtNum(v)} t`, "Fuel"]} />
-              <Bar dataKey="tonnes" fill="#38bdf8" radius={[0, 2, 2, 0]} />
+              <Bar dataKey="tonnes" fill="#0284c7" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -140,11 +145,11 @@ export function Dashboard() {
         <ChartCard title="Quick Insights" subtitle="Generated from current fleet and run data">
           <div className="flex flex-col gap-2.5">
             {data.insights.map((ins, i) => (
-              <div key={i} className="flex items-start gap-2 text-sm text-slate-ink leading-snug">
+              <div key={i} className="flex items-start gap-2 text-sm text-slate-700 leading-snug">
                 <Anchor className={
                   ins.severity === "positive" ? "h-3.5 w-3.5 mt-0.5 text-positive shrink-0" :
                   ins.severity === "warn" ? "h-3.5 w-3.5 mt-0.5 text-warn shrink-0" :
-                  "h-3.5 w-3.5 mt-0.5 text-steel shrink-0"
+                  "h-3.5 w-3.5 mt-0.5 text-slate-400 shrink-0"
                 } strokeWidth={1.75} />
                 <span>{ins.text}</span>
               </div>
@@ -154,9 +159,9 @@ export function Dashboard() {
       </div>
 
       {data.best_run && (
-        <div className="glass-panel rounded-xl p-4 flex items-center justify-between">
-          <div className="text-sm text-slate-body">
-            Best stored optimisation run: <span className="font-medium text-slate-ink">{data.best_run.algorithm}</span>,
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center justify-between shadow-card">
+          <div className="text-sm text-slate-500">
+            Best stored optimisation run: <span className="font-medium text-slate-800">{data.best_run.algorithm}</span>,
             fitness {data.best_run.summary.fitness.toFixed(4)}
           </div>
           <Link to="/optimizer"><Button variant="secondary">Open Fleet Optimizer</Button></Link>

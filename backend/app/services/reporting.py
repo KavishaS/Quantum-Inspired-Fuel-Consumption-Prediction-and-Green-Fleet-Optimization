@@ -17,7 +17,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import (
-    PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle)
+    Image, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle)
 
 NAVY = colors.HexColor("#0B2447")
 BLUE = colors.HexColor("#19507E")
@@ -70,13 +70,13 @@ def _page_furniture(canvas, doc):
     canvas.rect(0, A4[1] - 14 * mm, A4[0], 14 * mm, fill=1, stroke=0)
     canvas.setFillColor(colors.white)
     canvas.setFont("Helvetica-Bold", 9)
-    canvas.drawString(15 * mm, A4[1] - 9.5 * mm, "GREENFLEET QUANTUM")
+    canvas.drawString(15 * mm, A4[1] - 9.5 * mm, "VATES QUANTUM FLEET")
     canvas.setFont("Helvetica", 8)
     canvas.drawRightString(A4[0] - 15 * mm, A4[1] - 9.5 * mm,
                            "Quantum-Inspired Fuel Prediction & Green Fleet Optimization")
     canvas.setFillColor(colors.grey)
     canvas.setFont("Helvetica", 7.5)
-    canvas.drawString(15 * mm, 10 * mm, "PS-138  |  Model estimates from a demonstration platform - not certified regulatory output")
+    canvas.drawString(15 * mm, 10 * mm, "VATES Platform  |  Model estimates for strategic planning - not certified regulatory output")
     canvas.drawRightString(A4[0] - 15 * mm, 10 * mm, f"Page {doc.page}")
     canvas.restoreState()
 
@@ -146,23 +146,33 @@ def generate_report(payload: Dict[str, Any], out_dir: Optional[Path] = None) -> 
     out_dir = Path(out_dir or REPORTS_DIR)
     out_dir.mkdir(parents=True, exist_ok=True)
     ts = dt.datetime.now()
-    fname = f"greenfleet_report_{ts.strftime('%Y%m%d_%H%M%S')}.pdf"
+    fname = f"vates_fleet_report_{ts.strftime('%Y%m%d_%H%M%S')}.pdf"
     path = out_dir / fname
 
     s = _styles()
     doc = SimpleDocTemplate(str(path), pagesize=A4, topMargin=22 * mm, bottomMargin=18 * mm,
                             leftMargin=15 * mm, rightMargin=15 * mm,
-                            title="GreenFleet Quantum Analysis Report")
+                            title="VATES Fleet Optimization Analysis Report")
     F: List[Any] = []
     opt = payload.get("optimization") or {}
     summary = opt.get("summary", {})
     base = opt.get("baseline_summary", {})
     scenario = payload.get("scenario", {})
 
-    # 1 Title + executive summary
-    F.append(Spacer(1, 12 * mm))
-    F.append(Paragraph("Green Fleet Optimization Report", s["TitleBig"]))
-    F.append(Paragraph("PS-138 &mdash; Quantum-Inspired Fuel Consumption Prediction "
+    # Logo + Title
+    logo_path = Path(__file__).resolve().parent.parent / "static" / "vates-logo.png"
+    if logo_path.exists():
+        try:
+            F.append(Spacer(1, 2 * mm))
+            F.append(Image(str(logo_path), width=52 * mm, height=14.5 * mm, hAlign="CENTER"))
+            F.append(Spacer(1, 4 * mm))
+        except Exception:
+            F.append(Spacer(1, 10 * mm))
+    else:
+        F.append(Spacer(1, 10 * mm))
+
+    F.append(Paragraph("VATES Fleet Optimization Report", s["TitleBig"]))
+    F.append(Paragraph("Quantum-Inspired Fuel Consumption Prediction "
                        "and Green Fleet Optimization", s["Sub"]))
     F.append(Paragraph("1. Executive Summary", s["H1"]))
     if summary:
@@ -363,8 +373,7 @@ def generate_report(payload: Dict[str, Any], out_dir: Optional[Path] = None) -> 
     F.append(Paragraph("18. Report Metadata", s["H1"]))
     F.append(_table([
         ["Generated", ts.strftime("%Y-%m-%d %H:%M:%S")],
-        ["Platform", "GreenFleet Quantum"],
-        ["Problem statement", "PS-138"],
+        ["Platform", "VATES Quantum Fleet Optimization"],
         ["Scenario", scenario.get("name", payload.get("scenario_name", "ad hoc"))],
         ["Algorithm", opt.get("algorithm", "n/a")],
         ["Compute", "Classical hardware; quantum-inspired algorithms only"],

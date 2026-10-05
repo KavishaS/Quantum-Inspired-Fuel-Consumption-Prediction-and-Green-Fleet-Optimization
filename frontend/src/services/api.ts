@@ -37,7 +37,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       headers,
     });
   } catch {
-    throw new ApiError(0, "Cannot reach the GreenFleet API. Is the backend running on port 8000?");
+    throw new ApiError(0, "Cannot reach the VATES API. Is the backend running on port 8000?");
   }
   if (!res.ok) {
     let body: any = {};

@@ -73,11 +73,11 @@ export function ScenarioManager() {
       </div>
 
       {isAuditor && (
-        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3 text-emerald-300">
-          <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-emerald-900">
+          <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0" />
           <div>
-            <div className="font-semibold text-sm">Auditor Mode (Read-Only)</div>
-            <div className="text-xs text-emerald-300/80">
+            <div className="font-semibold text-sm text-emerald-800">Auditor Mode (Read-Only)</div>
+            <div className="text-xs text-emerald-700 leading-relaxed mt-0.5">
               ESG Auditors have read-only authority to inspect scenario payloads, cargo demands, and operational constraints. Creating, duplicating, or deleting scenarios requires Analyst or Admin role.
             </div>
           </div>

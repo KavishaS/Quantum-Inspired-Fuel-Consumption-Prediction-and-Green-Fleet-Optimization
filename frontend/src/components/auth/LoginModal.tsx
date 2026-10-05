@@ -31,11 +31,11 @@ const ROLES_INFO: DemoCard[] = [
     role: "admin",
     title: "Fleet Director / Admin",
     name: "Capt. Eleanor Vance",
-    email: "eleanor.vance@greenfleet.io",
+    email: "eleanor.vance@vates.io",
     icon: Crown,
-    color: "text-purple-400",
-    borderHover: "hover:border-purple-500/60 hover:shadow-[0_0_20px_rgba(168,85,247,0.25)]",
-    bgGlow: "bg-purple-500/10 text-purple-300 border-purple-500/30",
+    color: "text-violet-600",
+    borderHover: "hover:border-violet-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.10)]",
+    bgGlow: "bg-violet-50 text-violet-700 border-violet-200",
     badge: "Full Authority",
     description: "Full control over fleet assets, routes, fuel prices, scenario deletions, and optimizations.",
     permissions: ["Full CRUD on Vessels & Routes", "Trigger Quantum Optimizations", "Delete Scenarios", "Generate Audit Reports"],
@@ -44,11 +44,11 @@ const ROLES_INFO: DemoCard[] = [
     role: "analyst",
     title: "Quantum Fleet Analyst",
     name: "Dr. Marcus Chen",
-    email: "marcus.chen@greenfleet.io",
+    email: "marcus.chen@vates.io",
     icon: Zap,
-    color: "text-cyan-400",
-    borderHover: "hover:border-cyan-500/60 hover:shadow-[0_0_20px_rgba(6,182,212,0.25)]",
-    bgGlow: "bg-cyan-500/10 text-cyan-300 border-cyan-500/30",
+    color: "text-sky-600",
+    borderHover: "hover:border-sky-300 hover:shadow-[0_0_20px_rgba(2,132,199,0.10)]",
+    bgGlow: "bg-sky-50 text-sky-700 border-sky-200",
     badge: "Optimization & ML",
     description: "Authority to execute quantum metaheuristics, ML predictions, and what-if sandbox evaluations.",
     permissions: ["Execute QGA & QPSO Runs", "Run Telemetry ML Models", "What-If Fuel Sandbox", "Compare Scenarios"],
@@ -59,9 +59,9 @@ const ROLES_INFO: DemoCard[] = [
     name: "Sarah Jenkins",
     email: "sarah.jenkins@imo-compliance.org",
     icon: ShieldCheck,
-    color: "text-emerald-400",
-    borderHover: "hover:border-emerald-500/60 hover:shadow-[0_0_20px_rgba(16,185,129,0.25)]",
-    bgGlow: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30",
+    color: "text-emerald-600",
+    borderHover: "hover:border-emerald-300 hover:shadow-[0_0_20px_rgba(5,150,105,0.10)]",
+    bgGlow: "bg-emerald-50 text-emerald-700 border-emerald-200",
     badge: "Read-Only Compliance",
     description: "Inspection of environmental metrics, CII ratings, EU ETS penalties, and certified audit reports.",
     permissions: ["View Live AIS Fleet Map", "Audit IMO CII & EU ETS", "Inspect Pareto Fronts", "Download Certified PDFs"],
@@ -116,22 +116,33 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-2xl glass-panel rounded-2xl border border-slate-line/80 shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm animate-fade-in">
+      <div className="relative w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-elevated overflow-hidden flex flex-col">
         
         {/* Header */}
-        <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between bg-navy/60">
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-signal/10 border border-signal/30 text-signal shadow-glow">
-              <Lock className="h-5 w-5" />
+            <div className="relative">
+              <img
+                src="/vates-emblem.png"
+                alt="VATES Emblem"
+                className="h-10 w-10 object-contain drop-shadow-[0_3px_8px_rgba(11,45,79,0.22)]"
+              />
             </div>
             <div>
-              <h2 className="font-display text-lg font-bold text-slate-100 flex items-center gap-2">
-                Role-Based Access Control
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+              <div className="flex items-center gap-2">
+                <img
+                  src="/vates-wordmark.png"
+                  alt="VATES"
+                  className="h-4.5 w-auto object-contain"
+                />
+                <span className="text-sm font-bold text-slate-800">
+                  Role-Based Access
+                </span>
+                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
                   RBAC Active
                 </span>
-              </h2>
+              </div>
               <p className="text-xs text-slate-400 mt-0.5">
                 Switch operational personas or inspect the strict permissions matrix.
               </p>
@@ -139,21 +150,21 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Tab switch */}
-        <div className="px-6 pt-4 pb-2 border-b border-white/5 flex gap-2 overflow-x-auto">
+        <div className="px-6 pt-4 pb-2 border-b border-slate-100 flex gap-2 overflow-x-auto">
           <button
             onClick={() => setActiveTab("quick")}
             className={clsx(
-              "px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 shrink-0",
+              "px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 shrink-0",
               activeTab === "quick"
-                ? "bg-signal/20 text-signal border border-signal/40 shadow-glow"
-                : "text-slate-400 hover:text-white hover:bg-white/5"
+                ? "bg-sky-50 text-signal border border-sky-200"
+                : "text-slate-400 hover:text-slate-700 hover:bg-slate-50"
             )}
           >
             <Zap className="h-3.5 w-3.5" /> 1-Click Role Switcher
@@ -161,10 +172,10 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
           <button
             onClick={() => setActiveTab("matrix")}
             className={clsx(
-              "px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 shrink-0",
+              "px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 shrink-0",
               activeTab === "matrix"
-                ? "bg-signal/20 text-signal border border-signal/40 shadow-glow"
-                : "text-slate-400 hover:text-white hover:bg-white/5"
+                ? "bg-sky-50 text-signal border border-sky-200"
+                : "text-slate-400 hover:text-slate-700 hover:bg-slate-50"
             )}
           >
             <ShieldCheck className="h-3.5 w-3.5" /> Permissions Matrix
@@ -172,10 +183,10 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
           <button
             onClick={() => setActiveTab("custom")}
             className={clsx(
-              "px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 shrink-0",
+              "px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 shrink-0",
               activeTab === "custom"
-                ? "bg-signal/20 text-signal border border-signal/40 shadow-glow"
-                : "text-slate-400 hover:text-white hover:bg-white/5"
+                ? "bg-sky-50 text-signal border border-sky-200"
+                : "text-slate-400 hover:text-slate-700 hover:bg-slate-50"
             )}
           >
             <User className="h-3.5 w-3.5" /> Enterprise Login
@@ -183,8 +194,8 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
         </div>
 
         {error && (
-          <div className="mx-6 mt-4 p-3 rounded-lg bg-red-500/15 border border-red-500/40 text-red-300 text-xs flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+          <div className="mx-6 mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0 text-red-500" />
             <span>{error}</span>
           </div>
         )}
@@ -204,51 +215,51 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                     key={item.role}
                     onClick={() => !isActive && handleDemoSwitch(item.role)}
                     className={clsx(
-                      "p-4 rounded-xl border transition-all duration-200 cursor-pointer relative flex flex-col gap-2.5",
+                      "p-4 rounded-2xl border transition-all duration-200 cursor-pointer relative flex flex-col gap-2.5",
                       isActive
-                        ? "bg-white/[0.08] border-signal/70 shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-signal/50"
-                        : clsx("bg-white/[0.02] border-white/10 hover:bg-white/[0.05]", item.borderHover)
+                        ? "bg-sky-50/50 border-sky-300 shadow-sm ring-1 ring-sky-200"
+                        : clsx("bg-white border-slate-200 hover:bg-slate-50/50", item.borderHover)
                     )}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className={clsx("p-2 rounded-lg bg-black/40 border border-white/10", item.color)}>
+                        <div className={clsx("p-2 rounded-xl bg-slate-50 border border-slate-200", item.color)}>
                           <Icon className="h-5 w-5" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm text-slate-100">{item.title}</span>
+                            <span className="font-semibold text-sm text-slate-800">{item.title}</span>
                             <span className={clsx("text-[10px] font-medium px-2 py-0.5 rounded-full border", item.bgGlow)}>
                               {item.badge}
                             </span>
                           </div>
                           <div className="text-xs text-slate-400">
-                            {item.name} &bull; <span className="text-slate-500">{item.email}</span>
+                            {item.name} &bull; <span className="text-slate-300">{item.email}</span>
                           </div>
                         </div>
                       </div>
 
                       {isActive ? (
-                        <div className="flex items-center gap-1.5 text-xs font-semibold text-signal bg-signal/10 px-2.5 py-1 rounded-lg border border-signal/30">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-signal bg-sky-50 px-2.5 py-1 rounded-xl border border-sky-200">
                           <CheckCircle2 className="h-4 w-4" /> Active
                         </div>
                       ) : (
                         <button
                           disabled={isLoading}
-                          className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-signal/20 hover:text-signal text-xs font-medium text-slate-300 border border-white/10 transition-colors flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-signal text-xs font-medium text-slate-500 border border-slate-200 transition-colors flex items-center gap-1"
                         >
                           Switch <ArrowRight className="h-3 w-3" />
                         </button>
                       )}
                     </div>
 
-                    <p className="text-xs text-slate-300 leading-relaxed">
+                    <p className="text-xs text-slate-500 leading-relaxed">
                       {item.description}
                     </p>
 
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       {item.permissions.map((p) => (
-                        <span key={p} className="text-[10px] px-2 py-0.5 rounded bg-black/30 text-slate-400 border border-white/5 font-mono">
+                        <span key={p} className="text-[10px] px-2 py-0.5 rounded-lg bg-slate-50 text-slate-500 border border-slate-200 font-mono">
                           ✓ {p}
                         </span>
                       ))}
@@ -259,41 +270,41 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
             </div>
           ) : activeTab === "matrix" ? (
             <div className="space-y-4">
-              <div className="text-xs text-slate-300">
+              <div className="text-xs text-slate-500">
                 Detailed Role Authority &amp; Access Control Matrix. Your active session is highlighted:
               </div>
 
-              <div className="overflow-x-auto rounded-xl border border-white/10">
+              <div className="overflow-x-auto rounded-2xl border border-slate-200">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-black/40 text-slate-300 border-b border-white/10 uppercase tracking-wider text-[10px]">
+                  <thead className="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase tracking-wider text-[10px]">
                     <tr>
                       <th className="py-2.5 px-3 font-semibold">Capability / Action</th>
-                      <th className={clsx("py-2.5 px-2.5 text-center font-semibold", role === "admin" && "bg-purple-500/20 text-purple-300")}>
+                      <th className={clsx("py-2.5 px-2.5 text-center font-semibold", role === "admin" && "bg-violet-50 text-violet-700")}>
                         Fleet Director {role === "admin" && "(You)"}
                       </th>
-                      <th className={clsx("py-2.5 px-2.5 text-center font-semibold", role === "analyst" && "bg-cyan-500/20 text-cyan-300")}>
+                      <th className={clsx("py-2.5 px-2.5 text-center font-semibold", role === "analyst" && "bg-sky-50 text-sky-700")}>
                         Quantum Analyst {role === "analyst" && "(You)"}
                       </th>
-                      <th className={clsx("py-2.5 px-2.5 text-center font-semibold", role === "auditor" && "bg-emerald-500/20 text-emerald-300")}>
+                      <th className={clsx("py-2.5 px-2.5 text-center font-semibold", role === "auditor" && "bg-emerald-50 text-emerald-700")}>
                         ESG Auditor {role === "auditor" && "(You)"}
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-slate-100">
                     {PERMISSIONS_MATRIX.map((row, i) => (
-                      <tr key={i} className="hover:bg-white/[0.02]">
-                        <td className="py-2.5 px-3 text-slate-200">
+                      <tr key={i} className="hover:bg-slate-50/50">
+                        <td className="py-2.5 px-3 text-slate-700">
                           <div>{row.feature}</div>
-                          <div className="text-[10px] text-slate-500">{row.note}</div>
+                          <div className="text-[10px] text-slate-300">{row.note}</div>
                         </td>
-                        <td className={clsx("py-2.5 px-2.5 text-center font-bold", role === "admin" && "bg-purple-500/10")}>
-                          {row.admin ? <span className="text-emerald-400">✓ Full</span> : <span className="text-red-400">✗</span>}
+                        <td className={clsx("py-2.5 px-2.5 text-center font-bold", role === "admin" && "bg-violet-50/50")}>
+                          {row.admin ? <span className="text-emerald-600">✓ Full</span> : <span className="text-red-500">✗</span>}
                         </td>
-                        <td className={clsx("py-2.5 px-2.5 text-center font-bold", role === "analyst" && "bg-cyan-500/10")}>
-                          {row.analyst ? <span className="text-emerald-400">✓ Full</span> : <span className="text-red-400">✗ Blocked</span>}
+                        <td className={clsx("py-2.5 px-2.5 text-center font-bold", role === "analyst" && "bg-sky-50/50")}>
+                          {row.analyst ? <span className="text-emerald-600">✓ Full</span> : <span className="text-red-500">✗ Blocked</span>}
                         </td>
-                        <td className={clsx("py-2.5 px-2.5 text-center font-bold", role === "auditor" && "bg-emerald-500/10")}>
-                          {row.auditor ? <span className="text-emerald-400">✓ View</span> : <span className="text-amber-400">🔒 Locked</span>}
+                        <td className={clsx("py-2.5 px-2.5 text-center font-bold", role === "auditor" && "bg-emerald-50/50")}>
+                          {row.auditor ? <span className="text-emerald-600">✓ View</span> : <span className="text-amber-500">🔒 Locked</span>}
                         </td>
                       </tr>
                     ))}
@@ -304,29 +315,29 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
           ) : (
             <form onSubmit={handleCustomLogin} className="space-y-4 max-w-md mx-auto py-2">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-300">Username</label>
+                <label className="text-xs font-medium text-slate-600">Username</label>
                 <div className="relative">
-                  <User className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <User className="absolute left-3 top-2.5 h-4 w-4 text-slate-300" />
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="e.g. admin or analyst"
-                    className="w-full pl-9 pr-3 py-2 rounded-lg bg-white/5 border border-white/15 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-signal"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-300 focus:outline-none focus:border-signal focus:ring-2 focus:ring-sky-100"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-300">Password</label>
+                <label className="text-xs font-medium text-slate-600">Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-300" />
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter password"
-                    className="w-full pl-9 pr-3 py-2 rounded-lg bg-white/5 border border-white/15 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-signal"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-300 focus:outline-none focus:border-signal focus:ring-2 focus:ring-sky-100"
                   />
                 </div>
               </div>
@@ -334,7 +345,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-2.5 rounded-lg bg-signal hover:bg-cyan-400 text-navy font-semibold text-sm transition-all duration-200 shadow-glow disabled:opacity-50"
+                className="w-full py-2.5 rounded-xl bg-signal hover:bg-sky-600 text-white font-semibold text-sm transition-all duration-200 shadow-sm disabled:opacity-50"
               >
                 {isLoading ? "Authenticating…" : "Sign In with Credentials"}
               </button>
@@ -343,11 +354,11 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-white/10 bg-navy/80 flex items-center justify-between text-xs text-slate-400">
+        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/80 flex items-center justify-between text-xs text-slate-400">
           <div className="flex items-center gap-2">
             <span>Current Session:</span>
-            <strong className="text-slate-200">{user?.display_name || "Guest"}</strong>
-            <span className="uppercase text-[9px] px-1.5 py-0.5 rounded bg-white/10 font-mono text-cyan-300">
+            <strong className="text-slate-700">{user?.display_name || "Guest"}</strong>
+            <span className="uppercase text-[9px] px-1.5 py-0.5 rounded-full bg-sky-50 font-mono text-sky-600 border border-sky-200">
               {role}
             </span>
           </div>
@@ -357,7 +368,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
               logout();
               onClose();
             }}
-            className="text-xs text-slate-400 hover:text-red-400 transition-colors"
+            className="text-xs text-slate-400 hover:text-red-500 transition-colors"
           >
             Sign Out
           </button>

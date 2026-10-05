@@ -89,9 +89,9 @@ export function Benchmarking() {
           <ChartCard title="Solution Quality" subtitle="Mean fitness across independent runs (lower is better) — error bars omitted, see table for std dev">
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={Object.entries(data.results).map(([k, v]) => ({ algorithm: k, ...v }))}>
-                <CartesianGrid stroke="#27272a" vertical={false} />
-                <XAxis dataKey="algorithm" tick={{ fontSize: 12, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} width={50} />
+                <CartesianGrid stroke="#e2e8f0" vertical={false} />
+                <XAxis dataKey="algorithm" tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} width={50} />
                 <Tooltip formatter={(v: number) => v.toFixed(4)} />
                 <Bar dataKey="mean_fitness" radius={[2, 2, 0, 0]}>
                   {Object.keys(data.results).map((k) => <Bar key={k} dataKey="mean_fitness" fill={ALGO_COLORS[k]} />)}
@@ -103,9 +103,9 @@ export function Benchmarking() {
           <ChartCard title="Convergence Comparison" subtitle="Mean best fitness by iteration">
             <ResponsiveContainer width="100%" height={260}>
               <LineChart data={convergenceRows}>
-                <CartesianGrid stroke="#27272a" vertical={false} />
-                <XAxis dataKey="iteration" tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} width={50} />
+                <CartesianGrid stroke="#e2e8f0" vertical={false} />
+                <XAxis dataKey="iteration" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} width={50} />
                 <Tooltip />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 {Object.keys(data.convergence).map((algo) => (

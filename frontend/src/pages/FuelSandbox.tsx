@@ -47,24 +47,46 @@ export function FuelSandbox() {
         <p className="text-sm text-slate-body mt-0.5">Compare HFO, MGO, LNG, methanol, ammonia and hydrogen for one representative voyage profile.</p>
       </div>
 
-      <div className="glass-panel rounded-xl p-4 flex flex-wrap items-end gap-4">
-        <Field label="Vessel class">
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 flex flex-wrap items-end gap-4">
+        <Field label="Vessel Class">
           <Select value={vesselClass} onChange={(e) => setVesselClass(e.target.value)}>
-            {["HANDYSIZE", "SUPRAMAX", "PANAMAX", "CAPESIZE"].map((c) => <option key={c}>{c}</option>)}
+            {["HANDYSIZE", "SUPRAMAX", "PANAMAX", "CAPESIZE"].map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
           </Select>
         </Field>
-        <Field label="Distance (nm)">
-          <Input type="number" value={distance} onChange={(e) => setDistance(Number(e.target.value))} className="w-32" />
+        <Field label="Voyage Distance">
+          <Input
+            type="number"
+            value={distance}
+            onChange={(e) => setDistance(Number(e.target.value))}
+            suffix="nm"
+            className="w-28"
+          />
         </Field>
-        <Field label="Carbon price ($/t)">
-          <Input type="number" value={carbonPrice} onChange={(e) => setCarbonPrice(Number(e.target.value))} className="w-32" />
+        <Field label="Carbon Tax Rate">
+          <Input
+            type="number"
+            value={carbonPrice}
+            onChange={(e) => setCarbonPrice(Number(e.target.value))}
+            suffix="$/t"
+            className="w-28"
+          />
         </Field>
-        <Field label="Incumbent fuel">
+        <Field label="Incumbent Fuel Baseline">
           <Select value={incumbent} onChange={(e) => setIncumbent(e.target.value)}>
-            {["HFO", "MGO", "LNG"].map((c) => <option key={c}>{c}</option>)}
+            {["HFO", "MGO", "LNG"].map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
           </Select>
         </Field>
-        <Button onClick={run} disabled={loading}>{loading ? "Calculating…" : "Recalculate"}</Button>
+        <Button onClick={run} disabled={loading} size="md" className="shadow-xs">
+          {loading ? "Simulating Transitions…" : "Run Decarbonization Sandbox"}
+        </Button>
       </div>
 
       {loading && <LoadingState label="Comparing fuels" />}
@@ -76,9 +98,9 @@ export function FuelSandbox() {
             <ChartCard title="Annual Operating Cost by Fuel" subtitle="Bunker spend plus carbon cost">
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={data.fuels}>
-                  <CartesianGrid stroke="#27272a" vertical={false} />
-                  <XAxis dataKey="fuel" tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} width={55}
+                  <CartesianGrid stroke="#e2e8f0" vertical={false} />
+                  <XAxis dataKey="fuel" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} width={55}
                          tickFormatter={(v) => `${(v / 1e6).toFixed(1)}M`} />
                   <Tooltip formatter={(v: number) => [fmtUsd(v), "Annual opex"]} />
                   <Bar dataKey="annual_opex_usd" radius={[2, 2, 0, 0]}>
@@ -91,9 +113,9 @@ export function FuelSandbox() {
             <ChartCard title="Lifecycle Emissions by Fuel" subtitle="Well-to-tank + tank-to-wake, tonnes CO2e/year">
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={data.fuels}>
-                  <CartesianGrid stroke="#27272a" vertical={false} />
-                  <XAxis dataKey="fuel" tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} width={50} />
+                  <CartesianGrid stroke="#e2e8f0" vertical={false} />
+                  <XAxis dataKey="fuel" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} width={50} />
                   <Tooltip formatter={(v: number) => [`${fmtNum(v)} t`, "Lifecycle CO2e"]} />
                   <Bar dataKey="annual_lifecycle_co2e_tonnes" radius={[2, 2, 0, 0]}>
                     {data.fuels.map((f) => <Cell key={f.fuel} fill={FUEL_COLORS[f.fuel]} />)}
@@ -130,8 +152,8 @@ export function FuelSandbox() {
                         <td className="py-2 pr-3 tabular text-right">{fmtNum(f.annual_fuel_tonnes)}</td>
                         <td className="py-2 pr-3 tabular text-right">{fmtUsd(f.annual_opex_usd)}</td>
                         <td className="py-2 pr-3 tabular text-right">{fmtNum(f.annual_lifecycle_co2e_tonnes)}</td>
-                        <td className="py-2 pr-3 tabular text-right text-xs text-slate-300">{fmtNum(annualSoxKg)}</td>
-                        <td className="py-2 pr-3 tabular text-right text-xs text-slate-300">{fmtNum(annualNoxKg)}</td>
+                        <td className="py-2 pr-3 tabular text-right text-xs text-slate-600">{fmtNum(annualSoxKg)}</td>
+                        <td className="py-2 pr-3 tabular text-right text-xs text-slate-600">{fmtNum(annualNoxKg)}</td>
                         <td className={`py-2 pr-3 tabular text-right font-medium ${
                           Math.abs(f.emission_change_pct) < 0.05 ? "text-slate-body" : f.emission_change_pct < 0 ? "text-positive" : "text-danger"}`}>
                           {fmtPct(f.emission_change_pct, 1, true)}

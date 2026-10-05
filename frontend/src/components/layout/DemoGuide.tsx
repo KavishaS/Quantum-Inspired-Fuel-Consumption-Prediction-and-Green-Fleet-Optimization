@@ -20,7 +20,7 @@ export function DemoGuide() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 z-40 flex items-center gap-2 bg-navy text-white px-4 py-2.5 text-sm font-medium shadow-lg hover:bg-navy-deep"
+        className="fixed bottom-5 right-5 z-40 flex items-center gap-2 bg-signal text-white px-4 py-2.5 text-sm font-medium rounded-xl shadow-lg hover:bg-sky-600 transition-colors"
       >
         <Compass className="h-4 w-4" /> Demo Guide
       </button>
@@ -28,16 +28,16 @@ export function DemoGuide() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 w-72 glass-panel rounded-xl shadow-xl">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-line bg-navy text-white">
-        <span className="text-sm font-display font-semibold">Judge Demo Flow</span>
-        <button onClick={() => setOpen(false)}><X className="h-4 w-4" /></button>
+    <div className="fixed bottom-5 right-5 z-40 w-72 bg-white rounded-2xl shadow-elevated border border-slate-200 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
+        <span className="text-sm font-display font-semibold text-slate-700">Judge Demo Flow</span>
+        <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors"><X className="h-4 w-4" /></button>
       </div>
       <ol className="p-3 flex flex-col gap-1">
         {STEPS.map((s, i) => (
           <Link key={i} to={s.to} onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 px-2 py-2 text-sm text-slate-ink hover:bg-foam">
-            <span className="h-5 w-5 rounded-full bg-signal/15 text-steel text-[11px] font-semibold flex items-center justify-center shrink-0">
+                className="flex items-center gap-2.5 px-2 py-2 text-sm text-slate-700 hover:bg-sky-50 rounded-xl transition-colors">
+            <span className="h-5 w-5 rounded-full bg-sky-50 text-signal text-[11px] font-semibold flex items-center justify-center shrink-0 border border-sky-200">
               {i + 1}
             </span>
             {s.label}

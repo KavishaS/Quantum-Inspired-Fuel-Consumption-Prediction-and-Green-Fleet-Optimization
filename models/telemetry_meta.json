@@ -1,6 +1,6 @@
 {
   "model_name": "HistGradientBoosting_Telemetry",
-  "trained_at": "2026-10-04 20:08:43",
+  "trained_at": "2026-10-05 23:17:02",
   "source_dataset": "fuel_training_data.csv",
   "total_sensor_records": 173986,
   "clean_records": 171693,
@@ -12,11 +12,11 @@
     "Triton"
   ],
   "metrics": {
-    "r2": 0.99712,
-    "rmse": 0.02437,
-    "mae": 0.01566,
-    "mape_pct": 260.95,
-    "train_seconds": 1.65
+    "r2": 0.99711,
+    "rmse": 0.02442,
+    "mae": 0.0157,
+    "mape_pct": 273.92,
+    "train_seconds": 1.53
   },
   "target_mean_kg_s": 0.54313,
   "target_mean_mt_per_day": 46.93

@@ -4,23 +4,31 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ["'Outfit'", "sans-serif"],
+        brand: ["'Montserrat'", "'Inter'", "sans-serif"],
+        display: ["'Outfit'", "'Montserrat'", "sans-serif"],
         sans: ["'Inter'", "sans-serif"],
         mono: ["'Fira Code'", "monospace"],
       },
       colors: {
-        navy: { DEFAULT: "#09090b", deep: "#000000", 50: "#18181b" },
-        steel: "#27272a",
-        signal: "#38bdf8", // Sky blue for primary
-        foam: "#09090b",   // Zinc 950 for background
-        slate: { ink: "#f4f4f5", body: "#a1a1aa", line: "#27272a" },
-        positive: "#10b981", // Emerald
-        warn: "#f59e0b",     // Amber
-        danger: "#ef4444",   // Red
+        /* ── Light theme palette ─────────────────────────── */
+        navy:    { DEFAULT: "#ffffff", deep: "#f8fafc", 50: "#f1f5f9" },
+        steel:   "#64748b",
+        signal:  "#0284c7",       // Sky-600 — primary accent
+        foam:    "#f8fafc",       // Slate-50 background
+        slate:   {
+          ink:  "#0f172a",        // Very dark text
+          body: "#64748b",        // Mid-gray body text
+          line: "#e2e8f0",        // Light border
+        },
+        positive: "#059669",      // Emerald-600
+        warn:     "#d97706",      // Amber-600
+        danger:   "#dc2626",      // Red-600
       },
-      boxShadow: { 
-        card: "0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5)",
-        glow: "0 0 20px rgba(56, 189, 248, 0.15)"
+      boxShadow: {
+        card: "0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06)",
+        glow: "0 0 20px rgba(2, 132, 199, 0.10)",
+        soft: "0 4px 24px -2px rgba(0, 0, 0, 0.06)",
+        elevated: "0 10px 40px -8px rgba(0, 0, 0, 0.08)",
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',

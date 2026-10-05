@@ -76,43 +76,43 @@ export function Compliance() {
 
       <ChartCard title="MARPOL Annex VI Multi-Emission Compliance" subtitle="Sulfur Oxides (SOx Reg. 14) and Nitrogen Oxides (NOx Reg. 13) standards">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="border border-slate-line p-3 flex flex-col gap-1.5 rounded-lg bg-navy-50/40">
+          <div className="border border-slate-line p-3 flex flex-col gap-1.5 rounded-lg bg-slate-50">
             <div className="flex items-center justify-between">
               <span className="font-medium text-sm text-slate-ink">SOx Global Cap</span>
-              <span className="text-xs px-2 py-0.5 rounded font-medium bg-positive/20 text-positive border border-positive/30">
+              <span className="text-xs px-2 py-0.5 rounded font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                 COMPLIANT
               </span>
             </div>
             <div className="text-xs text-slate-body">Limit: 0.50% S (≤ 10.0 kg SOx / t fuel)</div>
-            <div className="text-xs text-slate-400">Enforced worldwide outside Emission Control Areas.</div>
+            <div className="text-xs text-slate-500">Enforced worldwide outside Emission Control Areas.</div>
           </div>
 
-          <div className="border border-slate-line p-3 flex flex-col gap-1.5 rounded-lg bg-navy-50/40">
+          <div className="border border-slate-line p-3 flex flex-col gap-1.5 rounded-lg bg-slate-50">
             <div className="flex items-center justify-between">
               <span className="font-medium text-sm text-slate-ink">SOx ECA Cap</span>
-              <span className="text-xs px-2 py-0.5 rounded font-medium bg-signal/20 text-signal border border-signal/30">
+              <span className="text-xs px-2 py-0.5 rounded font-medium bg-sky-50 text-sky-700 border border-sky-200">
                 FUEL SPECIFIC
               </span>
             </div>
             <div className="text-xs text-slate-body">Limit: 0.10% S (≤ 2.0 kg SOx / t fuel)</div>
-            <div className="text-xs text-slate-400">Baltic, North Sea, North American &amp; Caribbean ECAs. MGO/LNG ready.</div>
+            <div className="text-xs text-slate-500">Baltic, North Sea, North American &amp; Caribbean ECAs. MGO/LNG ready.</div>
           </div>
 
-          <div className="border border-slate-line p-3 flex flex-col gap-1.5 rounded-lg bg-navy-50/40">
+          <div className="border border-slate-line p-3 flex flex-col gap-1.5 rounded-lg bg-slate-50">
             <div className="flex items-center justify-between">
               <span className="font-medium text-sm text-slate-ink">NOx IMO Tier III</span>
-              <span className="text-xs px-2 py-0.5 rounded font-medium bg-positive/20 text-positive border border-positive/30">
+              <span className="text-xs px-2 py-0.5 rounded font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                 TIER II/III READY
               </span>
             </div>
             <div className="text-xs text-slate-body">Limit: ≤ 2.0–3.4 g NOx / kWh in ECAs</div>
-            <div className="text-xs text-slate-400">LNG dual-fuel engines achieve ~85% NOx reduction.</div>
+            <div className="text-xs text-slate-500">LNG dual-fuel engines achieve ~85% NOx reduction.</div>
           </div>
         </div>
       </ChartCard>
 
-      <div className="border border-warn/25 bg-warn/5 p-3 text-xs text-slate-body flex items-start gap-2">
-        <ShieldCheck className="h-4 w-4 text-warn shrink-0 mt-0.5" />
+      <div className="border border-amber-200 bg-amber-50 p-3.5 rounded-xl text-xs text-slate-700 flex items-start gap-2">
+        <ShieldCheck className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
         {data.disclaimer}
       </div>
 

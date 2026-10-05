@@ -1,9 +1,7 @@
-# GREENFLEET QUANTUM
+# VATES
 
 **Quantum-Inspired Fuel Consumption Prediction & Green Fleet Optimization**  
 *Predict. Optimize. Decarbonize.*
-
-Smart India Hackathon — **PS-138: Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization**
 
 [![CI Pipeline](https://github.com/KavishaS/Quantum-Inspired-Fuel-Consumption-Prediction-and-Green-Fleet-Optimization/actions/workflows/ci.yml/badge.svg)](https://github.com/KavishaS/Quantum-Inspired-Fuel-Consumption-Prediction-and-Green-Fleet-Optimization/actions)
 ![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.14-blue)
@@ -320,7 +318,7 @@ python -m pytest tests/ -v
 
 ---
 
-## 16. SIH PS-138 Deliverables Matrix
+## 16. Platform Deliverables Matrix
 
 | Deliverable | Description | Status |
 |---|---|:---:|
@@ -348,7 +346,7 @@ python -m pytest tests/ -v
 
 ## 17. License & Attribution
 
-Developed for **Smart India Hackathon (SIH) — PS-138: Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization**.
+Developed as **VATES: Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization Platform**.
 
 * **Quantum-Inspired Computation:** Metaheuristics run on classical CPU hardware; no quantum hardware or cloud subscription required.
 * **Compliance Disclaimer:** Compliance outputs are mathematical model estimates based on published IMO/EU formulas and must not be construed as official statutory certification.

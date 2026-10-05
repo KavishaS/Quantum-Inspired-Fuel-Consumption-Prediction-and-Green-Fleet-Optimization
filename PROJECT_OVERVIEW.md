@@ -1,7 +1,7 @@
-# GREENFLEET QUANTUM: Comprehensive Project Overview
+# VATES: Comprehensive Project Overview
 
 **Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization**  
-*Smart India Hackathon (SIH) — Problem Statement PS-138*
+*Enterprise Maritime Decarbonization Platform*
 
 ---
 
@@ -12,7 +12,7 @@ Maritime transportation accounts for approximately 3% of global greenhouse gas (
 2. Tightening international decarbonization mandates (IMO GHG Strategy, EU Emissions Trading System [ETS], FuelEU Maritime).
 3. Complex non-linear combinatorial optimization challenges: fleet deployment, multi-port scheduling, continuous speed optimization, alternative fuel selection, weather routing, and strict cargo delivery deadlines.
 
-**GREENFLEET QUANTUM** is an end-to-end decision support platform that solves this multi-objective problem. It combines:
+**VATES** is an end-to-end decision support platform that solves this multi-objective problem. It combines:
 - **Physical Propulsion & Hydrodynamic Models**: Grounded in naval architecture (Admiralty cube law, load-dependent specific fuel consumption, environmental drag).
 - **Machine Learning Regressors**: Fast surrogate fuel consumption predictors trained on maritime telemetry.
 - **Quantum-Inspired Metaheuristics (QGA & QPSO)**: Harnessing quantum concepts (qubit superposition, quantum rotation gates, delta potential-well collapse) running on classical hardware for fast convergence without getting trapped in local minima.

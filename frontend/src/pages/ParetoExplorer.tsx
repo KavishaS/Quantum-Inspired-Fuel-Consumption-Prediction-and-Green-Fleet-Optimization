@@ -48,16 +48,28 @@ export function ParetoExplorer() {
         <p className="text-sm text-slate-body mt-0.5">Cost vs. lifecycle CO2e trade-off across a weighted-sum scalarisation sweep.</p>
       </div>
 
-      <div className="glass-panel rounded-xl p-4 flex flex-wrap items-end gap-4">
-        <Field label="Scenario">
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 flex flex-wrap items-end gap-4">
+        <Field label="Planning Scenario">
           <Select value={scenarioId ?? ""} onChange={(e) => setScenarioId(Number(e.target.value))}>
-            {scenarioData?.scenarios.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            {scenarioData?.scenarios.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name} ({s.vessels} vessels, {s.routes} routes)
+              </option>
+            ))}
           </Select>
         </Field>
-        <Field label="Min cargo fulfilment %">
-          <Input type="number" value={minCargo} onChange={(e) => setMinCargo(Number(e.target.value))} className="w-32" />
+        <Field label="Min Cargo Fulfilment">
+          <Input
+            type="number"
+            value={minCargo}
+            onChange={(e) => setMinCargo(Number(e.target.value))}
+            suffix="%"
+            className="w-24"
+          />
         </Field>
-        <Button onClick={run} disabled={loading}>{loading ? "Sweeping…" : "Run Pareto Sweep"}</Button>
+        <Button onClick={run} disabled={loading} size="md">
+          {loading ? "Sweeping Non-Dominated Frontiers…" : "Run Pareto Frontier Sweep"}
+        </Button>
       </div>
 
       {loading && <LoadingState label="Generating Pareto front" />}
@@ -68,25 +80,25 @@ export function ParetoExplorer() {
           <ChartCard title="Cost vs Lifecycle CO2e" subtitle={`${data.pareto_count} of ${data.solutions.length} configurations are non-dominated · ${data.method}`}>
             <ResponsiveContainer width="100%" height={380}>
               <ScatterChart margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
-                <CartesianGrid stroke="#27272a" />
-                <XAxis type="number" dataKey="cost_usd" name="Cost" tick={{ fontSize: 11, fill: "#a1a1aa" }}
-                       tickFormatter={(v) => `${(v / 1e6).toFixed(1)}M`} label={{ value: "Operational cost (USD)", position: "insideBottom", offset: -5, fontSize: 11, fill: "#a1a1aa" }} />
-                <YAxis type="number" dataKey="lifecycle_co2e_tonnes" name="CO2e" tick={{ fontSize: 11, fill: "#a1a1aa" }}
-                       label={{ value: "Lifecycle CO2e (t)", angle: -90, position: "insideLeft", fontSize: 11, fill: "#a1a1aa" }} />
+                <CartesianGrid stroke="#e2e8f0" />
+                <XAxis type="number" dataKey="cost_usd" name="Cost" tick={{ fontSize: 11, fill: "#64748b" }}
+                       tickFormatter={(v) => `${(v / 1e6).toFixed(1)}M`} label={{ value: "Operational cost (USD)", position: "insideBottom", offset: -5, fontSize: 11, fill: "#64748b" }} />
+                <YAxis type="number" dataKey="lifecycle_co2e_tonnes" name="CO2e" tick={{ fontSize: 11, fill: "#64748b" }}
+                       label={{ value: "Lifecycle CO2e (t)", angle: -90, position: "insideLeft", fontSize: 11, fill: "#64748b" }} />
                 <ZAxis range={[80, 80]} />
                 <Tooltip cursor={{ strokeDasharray: "3 3" }} formatter={(v: number, n: string) =>
                   [n === "Cost" ? fmtUsd(v) : `${fmtNum(v)} t`, n]} />
                 <Scatter data={data.solutions} onClick={(p: any) => setSelected(p)}>
                   {data.solutions.map((s, i) => (
-                    <Cell key={i} fill={s.pareto_optimal ? "#38bdf8" : "#3f3f46"}
+                    <Cell key={i} fill={s.pareto_optimal ? "#0284c7" : "#cbd5e1"}
                           stroke={s.id === selected?.id ? "#8b5cf6" : "none"} strokeWidth={2} cursor="pointer" />
                   ))}
                 </Scatter>
               </ScatterChart>
             </ResponsiveContainer>
             <div className="flex gap-4 text-xs text-slate-body mt-1">
-              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-navy" /> Pareto-optimal</span>
-              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-slate-line" /> Dominated</span>
+              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-signal" /> Pareto-optimal</span>
+              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-slate-300" /> Dominated</span>
             </div>
           </ChartCard>
 
@@ -157,18 +169,18 @@ export function ParetoExplorer() {
               </thead>
               <tbody>
                 {selected.assignments.map((a) => (
-                  <tr key={a.vessel_id} className="border-b border-slate-line/50 hover:bg-white/5 transition-colors">
+                  <tr key={a.vessel_id} className="border-b border-slate-line/50 hover:bg-slate-50 transition-colors">
                     <td className="py-2 pr-3 font-medium text-slate-ink">{a.vessel_name}</td>
-                    <td className="py-2 pr-3 text-xs text-slate-300">
+                    <td className="py-2 pr-3 text-xs text-slate-600">
                       {a.vessel_type || "Bulk Carrier"}
                     </td>
-                    <td className="py-2 pr-3 text-xs text-slate-300">
+                    <td className="py-2 pr-3 text-xs text-slate-600">
                       {a.size_class || a.vessel_class}
                     </td>
                     <td className="py-2 pr-3 text-xs text-slate-body">{a.route}</td>
                     <td className="py-2 pr-3 tabular text-right">{a.speed_kn.toFixed(1)} kn</td>
                     <td className="py-2 pr-3">
-                      <span className="text-xs px-2 py-0.5 rounded bg-signal/15 text-signal font-mono">
+                      <span className="text-xs px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200 font-mono">
                         {a.fuel_type || "HFO"}
                       </span>
                     </td>
@@ -186,12 +198,12 @@ export function ParetoExplorer() {
                     </td>
                     <td className="py-2 pr-3">
                       <span
-                        className={`text-xs px-2 py-0.5 rounded font-medium ${
+                        className={`text-xs px-2 py-0.5 rounded font-medium border ${
                           a.contract_status === "ON_TIME"
-                            ? "bg-positive/20 text-positive"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                             : a.contract_status === "DELAYED"
-                            ? "bg-danger/20 text-danger"
-                            : "bg-slate-500/20 text-slate-300"
+                            ? "bg-red-50 text-red-700 border-red-200"
+                            : "bg-slate-100 text-slate-700 border-slate-200"
                         }`}
                       >
                         {a.contract_status || (a.on_time ? "ON_TIME" : "DELAYED")}

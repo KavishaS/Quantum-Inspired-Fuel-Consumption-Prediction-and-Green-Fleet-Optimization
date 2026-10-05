@@ -139,16 +139,18 @@ export function WhatIfSimulator() {
       {/* Dual Configuration Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Baseline Panel */}
-        <div className="glass-panel rounded-xl p-5 border border-slate-line/50 flex flex-col gap-4 bg-navy-900/60">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-line/50">
+        <div className="rounded-2xl p-6 border border-slate-200/90 flex flex-col gap-4 bg-white shadow-xs">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-slate-400" />
-              <h2 className="text-sm font-semibold text-slate-ink uppercase tracking-wide">Baseline Voyage Profile</h2>
+              <span className="h-3 w-3 rounded-full bg-slate-400" />
+              <h2 className="text-xs font-black text-slate-800 uppercase tracking-wider">Baseline Reference Profile</h2>
             </div>
-            <span className="text-xs text-slate-body">Reference Case</span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+              Reference Case
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <Field label="Vessel Profile">
               <Select value={bVesselId} onChange={(e) => setBVesselId(Number(e.target.value))}>
                 {vessels.map((v) => (
@@ -169,24 +171,26 @@ export function WhatIfSimulator() {
               </Select>
             </Field>
 
-            <Field label="Distance (nm)">
+            <Field label="Distance">
               <Input
                 type="number"
                 value={bDistance}
                 onChange={(e) => setBDistance(Number(e.target.value))}
+                suffix="nm"
               />
             </Field>
 
-            <Field label="Speed (knots)">
+            <Field label="Cruising Speed">
               <Input
                 type="number"
                 step="0.1"
                 value={bSpeed}
                 onChange={(e) => setBSpeed(Number(e.target.value))}
+                suffix="kn"
               />
             </Field>
 
-            <Field label="Bunker Fuel">
+            <Field label="Bunker Fuel Grade">
               <Select value={bFuel} onChange={(e) => setBFuel(e.target.value)}>
                 {FUELS.map((f) => (
                   <option key={f} value={f}>
@@ -206,35 +210,39 @@ export function WhatIfSimulator() {
               </Select>
             </Field>
 
-            <Field label="Laycan / Contract Deadline (Hours)">
+            <Field label="Contract Deadline">
               <Input
                 type="number"
                 value={bDeadline}
                 onChange={(e) => setBDeadline(Number(e.target.value))}
+                suffix="hrs"
               />
             </Field>
 
-            <Field label="Contract Penalty Rate ($/day)">
+            <Field label="Demurrage Penalty">
               <Input
                 type="number"
                 value={bPenalty}
                 onChange={(e) => setBPenalty(Number(e.target.value))}
+                suffix="$/day"
               />
             </Field>
           </div>
         </div>
 
         {/* What-If Scenario Panel */}
-        <div className="glass-panel rounded-xl p-5 border border-signal/40 flex flex-col gap-4 bg-signal/5">
-          <div className="flex items-center justify-between pb-2 border-b border-signal/30">
+        <div className="rounded-2xl p-6 border border-sky-300 flex flex-col gap-4 bg-sky-50/40 shadow-xs">
+          <div className="flex items-center justify-between pb-3 border-b border-sky-200">
             <div className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-signal shadow-glow" />
-              <h2 className="text-sm font-semibold text-signal uppercase tracking-wide">What-If Alternative Scenario</h2>
+              <span className="h-3 w-3 rounded-full bg-sky-600 shadow-xs" />
+              <h2 className="text-xs font-black text-sky-900 uppercase tracking-wider">What-If Alternative Scenario</h2>
             </div>
-            <span className="text-xs text-signal font-mono">Simulated Case</span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-300 font-bold">
+              Simulated Variant
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <Field label="Vessel Profile">
               <Select value={sVesselId} onChange={(e) => setSVesselId(Number(e.target.value))}>
                 {vessels.map((v) => (
@@ -255,24 +263,26 @@ export function WhatIfSimulator() {
               </Select>
             </Field>
 
-            <Field label="Distance (nm)">
+            <Field label="Distance">
               <Input
                 type="number"
                 value={sDistance}
                 onChange={(e) => setSDistance(Number(e.target.value))}
+                suffix="nm"
               />
             </Field>
 
-            <Field label="Speed (knots)">
+            <Field label="Cruising Speed">
               <Input
                 type="number"
                 step="0.1"
                 value={sSpeed}
                 onChange={(e) => setSSpeed(Number(e.target.value))}
+                suffix="kn"
               />
             </Field>
 
-            <Field label="Bunker Fuel">
+            <Field label="Bunker Fuel Grade">
               <Select value={sFuel} onChange={(e) => setSFuel(e.target.value)}>
                 {FUELS.map((f) => (
                   <option key={f} value={f}>
@@ -292,19 +302,21 @@ export function WhatIfSimulator() {
               </Select>
             </Field>
 
-            <Field label="Laycan / Contract Deadline (Hours)">
+            <Field label="Contract Deadline">
               <Input
                 type="number"
                 value={sDeadline}
                 onChange={(e) => setSDeadline(Number(e.target.value))}
+                suffix="hrs"
               />
             </Field>
 
-            <Field label="Contract Penalty Rate ($/day)">
+            <Field label="Demurrage Penalty">
               <Input
                 type="number"
                 value={sPenalty}
                 onChange={(e) => setSPenalty(Number(e.target.value))}
+                suffix="$/day"
               />
             </Field>
           </div>
@@ -523,12 +535,12 @@ export function WhatIfSimulator() {
             </ChartCard>
 
             {/* Executive Verdict Card */}
-            <div className="glass-panel rounded-xl p-5 border border-slate-line/50 flex items-start gap-4 bg-navy-900/40">
-              <div className={`p-3 rounded-xl shrink-0 ${costDelta <= 0 ? "bg-positive/10 text-positive" : "bg-amber-500/10 text-amber-400"}`}>
+            <div className="glass-panel rounded-xl p-5 border border-slate-line flex items-start gap-4 bg-white">
+              <div className={`p-3 rounded-xl shrink-0 ${costDelta <= 0 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
                 {costDelta <= 0 ? (
-                  <CheckCircle2 className="h-6 w-6" />
+                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
                 ) : (
-                  <AlertTriangle className="h-6 w-6" />
+                  <AlertTriangle className="h-6 w-6 text-amber-600" />
                 )}
               </div>
               <div className="flex-1 text-sm text-slate-body">
@@ -621,7 +633,7 @@ function ComparisonTableRow({
   highlight?: "good" | "bad";
 }) {
   return (
-    <tr className="border-b border-slate-line/50 hover:bg-white/5 transition-colors">
+    <tr className="border-b border-slate-line/50 hover:bg-slate-50 transition-colors">
       <td className="py-2.5 pr-3 font-medium text-slate-ink">{label}</td>
       <td className="py-2.5 pr-3 tabular text-right text-slate-body">{bVal}</td>
       <td className="py-2.5 pr-3 tabular text-right font-medium text-slate-ink">{sVal}</td>

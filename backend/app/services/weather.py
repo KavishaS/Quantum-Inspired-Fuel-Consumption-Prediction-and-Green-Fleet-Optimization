@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -19,12 +20,14 @@ from .ports import ROUTE_WAYPOINTS
 
 log = logging.getLogger("greenfleet.weather")
 
+WEATHER_PROVIDER = os.getenv("WEATHER_PROVIDER", "open-meteo").lower()
+CACHE_TTL_SECONDS = int(os.getenv("WEATHER_CACHE_TTL_SECONDS", os.getenv("OPEN_METEO_CACHE_SECONDS", "900")))
+
 OPEN_METEO_MARINE_URL = "https://marine-api.open-meteo.com/v1/marine"
 OPEN_METEO_FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 
 # In-memory coordinate cache: (round(lat, 1), round(lon, 1)) -> (timestamp, data)
 _WEATHER_CACHE: Dict[Tuple[float, float], Tuple[float, Dict[str, Any]]] = {}
-CACHE_TTL_SECONDS = 900  # 15 minutes
 
 
 def _classify_sea_state(wave_height_m: float, wind_speed_kn: float) -> str:

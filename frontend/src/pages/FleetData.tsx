@@ -37,11 +37,11 @@ const SIZE_CLASSES = [
 const FUELS = ["HFO", "MGO", "LNG", "METHANOL", "AMMONIA", "HYDROGEN"];
 
 const TYPE_BADGE_STYLE: Record<string, string> = {
-  "Bulk Carrier": "bg-sky-500/20 text-sky-300 border-sky-500/30",
-  "Container Ship": "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
-  "Oil Tanker": "bg-pink-500/20 text-pink-300 border-pink-500/30",
-  "General Cargo": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-  "Ro-Ro": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+  "Bulk Carrier": "bg-sky-50 text-sky-700 border-sky-200",
+  "Container Ship": "bg-indigo-50 text-indigo-700 border-indigo-200",
+  "Oil Tanker": "bg-pink-50 text-pink-700 border-pink-200",
+  "General Cargo": "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Ro-Ro": "bg-amber-50 text-amber-700 border-amber-200",
 };
 
 export function FleetData() {
@@ -116,7 +116,7 @@ export function FleetData() {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="font-display text-xl font-semibold text-slate-ink">Fleet Master &amp; Vessel Profiles</h1>
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
               HETEROGENEOUS FLEET
             </span>
           </div>
@@ -154,12 +154,12 @@ export function FleetData() {
       </div>
 
       {/* Filter Toolbar */}
-      <div className="glass-panel rounded-xl p-4 flex flex-wrap items-end gap-3">
-        <div className="flex-1 min-w-[200px]">
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 flex flex-wrap items-end gap-3.5">
+        <div className="flex-1 min-w-[220px]">
           <Field label="Search Fleet">
             <Input
               type="text"
-              placeholder="Search code, name, IMO..."
+              placeholder="Search code, name, IMO, call sign..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -270,39 +270,39 @@ export function FleetData() {
                     <tr
                       key={v.id}
                       onClick={() => setSelectedVessel(v)}
-                      className={`border-b border-slate-line/50 hover:bg-white/5 transition-colors cursor-pointer ${
-                        selectedVessel?.id === v.id ? "bg-signal/10" : ""
+                      className={`border-b border-slate-line/50 hover:bg-slate-50 transition-colors cursor-pointer ${
+                        selectedVessel?.id === v.id ? "bg-sky-50/70" : ""
                       }`}
                     >
                       <td className="py-2.5 pr-3 font-medium text-slate-ink">
                         <div>{v.name}</div>
-                        <div className="text-xs text-slate-400 font-mono">{v.vessel_code}</div>
+                        <div className="text-xs text-slate-500 font-mono">{v.vessel_code}</div>
                       </td>
                       <td className="py-2.5 pr-3">
                         <span
                           className={`text-xs px-2 py-0.5 rounded font-medium border ${
-                            TYPE_BADGE_STYLE[typeLabel] || "bg-slate-500/20 text-slate-300 border-slate-500/30"
+                            TYPE_BADGE_STYLE[typeLabel] || "bg-slate-100 text-slate-700 border-slate-200"
                           }`}
                         >
                           {typeLabel}
                         </span>
                       </td>
                       <td className="py-2.5 pr-3 text-slate-ink font-medium">{sizeLabel}</td>
-                      <td className="py-2.5 pr-3 tabular text-right text-xs font-mono text-slate-400">
+                      <td className="py-2.5 pr-3 tabular text-right text-xs font-mono text-slate-500">
                         {v.imo || "—"}
                       </td>
                       <td className="py-2.5 pr-3 tabular text-right font-medium text-slate-ink">
                         {fmtNum(v.dwt)}
                       </td>
-                      <td className="py-2.5 pr-3 tabular text-right">{fmtNum(v.engine_kw)}</td>
-                      <td className="py-2.5 pr-3 tabular text-right text-xs text-slate-400">
+                      <td className="py-2.5 pr-3 tabular text-right text-slate-700">{fmtNum(v.engine_kw)}</td>
+                      <td className="py-2.5 pr-3 tabular text-right text-xs text-slate-500">
                         {v.length_m ? `${v.length_m}×${v.beam_m}×${v.draft_m}` : "—"}
                       </td>
-                      <td className="py-2.5 pr-3 tabular text-right">
+                      <td className="py-2.5 pr-3 tabular text-right text-slate-700">
                         {v.age_years.toFixed(0)}y
-                        {v.build_year && <span className="text-xs text-slate-400 block font-normal">({v.build_year})</span>}
+                        {v.build_year && <span className="text-xs text-slate-500 block font-normal">({v.build_year})</span>}
                       </td>
-                      <td className="py-2.5 pr-3 tabular text-right text-xs whitespace-nowrap">
+                      <td className="py-2.5 pr-3 tabular text-right text-xs text-slate-700 whitespace-nowrap">
                         {v.min_speed_kn}–{v.max_speed_kn} kn
                       </td>
                       <td className="py-2.5 pr-3">
@@ -310,22 +310,22 @@ export function FleetData() {
                           {v.allowed_fuels.map((fuel) => (
                             <span
                               key={fuel}
-                              className="text-[10px] px-1.5 py-0.2 rounded bg-navy-50 border border-slate-line/50 text-slate-300 font-mono"
+                              className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 border border-slate-200 text-slate-700 font-mono"
                             >
                               {fuel}
                             </span>
                           ))}
                         </div>
                       </td>
-                      <td className="py-2.5 pr-3 tabular text-right text-xs text-slate-300">
+                      <td className="py-2.5 pr-3 tabular text-right text-xs text-slate-600">
                         <span className="font-semibold text-slate-ink">{range[0]}–{range[1]}</span> MT/d
                       </td>
                       <td className="py-2.5 pr-3">
                         <span
-                          className={`text-xs px-2 py-0.5 rounded font-medium ${
+                          className={`text-xs px-2 py-0.5 rounded font-medium border ${
                             v.status === "active"
-                              ? "bg-positive/20 text-positive border border-positive/30"
-                              : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : "bg-amber-50 text-amber-700 border-amber-200"
                           }`}
                         >
                           {v.status}
@@ -338,14 +338,14 @@ export function FleetData() {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => setSelectedVessel(v)}
-                            className="p-1 hover:bg-white/10 rounded text-slate-body hover:text-signal transition-colors"
+                            className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-signal transition-colors"
                             title="View technical dossier"
                           >
                             <Info className="h-3.5 w-3.5" />
                           </button>
                           <button
                             onClick={() => remove(v.id)}
-                            className="p-1 hover:bg-white/10 rounded text-slate-body hover:text-danger transition-colors"
+                            className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-danger transition-colors"
                             title="Delete vessel"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -363,34 +363,34 @@ export function FleetData() {
 
       {/* Vessel Technical Dossier Modal / Drawer */}
       {selectedVessel && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-navy-900 border border-slate-line/80 rounded-2xl max-w-2xl w-full p-6 shadow-2xl overflow-y-auto max-h-[92vh] flex flex-col gap-5">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-line rounded-2xl max-w-2xl w-full p-6 shadow-2xl overflow-y-auto max-h-[92vh] flex flex-col gap-5">
             {/* Modal Header */}
-            <div className="flex items-start justify-between pb-3 border-b border-slate-line/60">
+            <div className="flex items-start justify-between pb-3 border-b border-slate-line">
               <div>
                 <div className="flex items-center gap-3">
                   <h2 className="text-lg font-bold text-slate-ink">{selectedVessel.name}</h2>
                   <span
                     className={`text-xs px-2 py-0.5 rounded font-medium border ${
                       TYPE_BADGE_STYLE[selectedVessel.vessel_type || "Bulk Carrier"] ||
-                      "bg-slate-500/20 text-slate-300"
+                      "bg-slate-100 text-slate-700 border-slate-200"
                     }`}
                   >
                     {selectedVessel.vessel_type || selectedVessel.vessel_class}
                   </span>
-                  <span className="text-xs text-signal font-mono">
+                  <span className="text-xs text-signal font-mono font-medium">
                     {selectedVessel.size_class || selectedVessel.vessel_class}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
-                  <span>Code: <strong className="text-slate-300">{selectedVessel.vessel_code}</strong></span>
-                  <span>IMO: <strong className="text-slate-300">{selectedVessel.imo || "Unassigned"}</strong></span>
-                  <span>Status: <strong className="text-positive uppercase">{selectedVessel.status}</strong></span>
+                <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                  <span>Code: <strong className="text-slate-700">{selectedVessel.vessel_code}</strong></span>
+                  <span>IMO: <strong className="text-slate-700">{selectedVessel.imo || "Unassigned"}</strong></span>
+                  <span>Status: <strong className="text-emerald-700 uppercase">{selectedVessel.status}</strong></span>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedVessel(null)}
-                className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-white/10"
+                className="p-1 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -408,7 +408,7 @@ export function FleetData() {
             </div>
 
             {/* Propulsion & Hydrodynamics */}
-            <div className="glass-panel rounded-xl p-4 border border-slate-line/50 flex flex-col gap-3">
+            <div className="glass-panel rounded-xl p-4 border border-slate-line flex flex-col gap-3">
               <h3 className="text-xs font-bold text-slate-body uppercase tracking-wider">
                 Propulsion &amp; Speed Envelopes
               </h3>
@@ -435,14 +435,14 @@ export function FleetData() {
             </div>
 
             {/* Fuel Consumption Sanity & Validation Bounds */}
-            <div className="glass-panel rounded-xl p-4 border border-emerald-500/30 bg-emerald-500/5 flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-emerald-400 font-semibold text-xs uppercase tracking-wide">
-                <CheckCircle2 className="h-4 w-4" />
+            <div className="glass-panel rounded-xl p-4 border border-emerald-200 bg-emerald-50/60 flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-emerald-800 font-semibold text-xs uppercase tracking-wide">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                 <span>Operational Fuel Consumption Sanity Range</span>
               </div>
-              <p className="text-xs text-slate-body leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Benchmark hydrodynamic envelope for this vessel class at cruising speed:{" "}
-                <strong className="text-slate-ink">
+                <strong className="text-slate-900">
                   {selectedVessel.daily_fuel_mt_expected_range?.[0] ?? 25} –{" "}
                   {selectedVessel.daily_fuel_mt_expected_range?.[1] ?? 45} MT/day
                 </strong>
@@ -451,7 +451,7 @@ export function FleetData() {
             </div>
 
             {/* Fuel Capability & Green Transition */}
-            <div className="glass-panel rounded-xl p-4 border border-slate-line/50 flex flex-col gap-2">
+            <div className="glass-panel rounded-xl p-4 border border-slate-line flex flex-col gap-2">
               <h3 className="text-xs font-bold text-slate-body uppercase tracking-wider">
                 Authorized Fuel Types &amp; Retrofit Readiness
               </h3>
@@ -459,19 +459,19 @@ export function FleetData() {
                 {selectedVessel.allowed_fuels.map((fuel) => (
                   <span
                     key={fuel}
-                    className="px-3 py-1 rounded-lg bg-signal/10 border border-signal/30 text-signal font-mono text-xs font-semibold"
+                    className="px-3 py-1 rounded-lg bg-sky-50 border border-sky-200 text-sky-700 font-mono text-xs font-semibold"
                   >
                     {fuel}
                   </span>
                 ))}
               </div>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-slate-500 mt-1">
                 Data Provenance: {selectedVessel.source || "Clarksons World Fleet Register"} (Archive {selectedVessel.source_date || "2026"})
               </p>
             </div>
 
             {/* Quick Actions Footer */}
-            <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-line/50">
+            <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-line">
               <Button
                 variant="secondary"
                 onClick={() => {
@@ -513,14 +513,14 @@ export function FleetData() {
               </thead>
               <tbody>
                 {routeData.routes.map((r) => (
-                  <tr key={r.id} className="border-b border-slate-line/50 hover:bg-white/5 transition-colors">
+                  <tr key={r.id} className="border-b border-slate-line/50 hover:bg-slate-50 transition-colors">
                     <td className="py-2 pr-3 font-medium text-slate-ink whitespace-nowrap">{r.route_code}</td>
                     <td className="py-2 pr-3 text-slate-body whitespace-nowrap">{r.name}</td>
-                    <td className="py-2 pr-3 tabular text-right">{fmtNum(r.distance_nm)}</td>
-                    <td className="py-2 pr-3 tabular text-right">{r.cargo_demand_tonnes ? fmtNum(r.cargo_demand_tonnes) : "—"}</td>
-                    <td className="py-2 pr-3 tabular text-right">{r.deadline_hours ? `${r.deadline_hours}h` : "—"}</td>
+                    <td className="py-2 pr-3 tabular text-right text-slate-700">{fmtNum(r.distance_nm)}</td>
+                    <td className="py-2 pr-3 tabular text-right text-slate-700">{r.cargo_demand_tonnes ? fmtNum(r.cargo_demand_tonnes) : "—"}</td>
+                    <td className="py-2 pr-3 tabular text-right text-slate-700">{r.deadline_hours ? `${r.deadline_hours}h` : "—"}</td>
                     <td className="py-2 pr-3 whitespace-nowrap">
-                      <span className="text-xs px-2 py-0.5 rounded bg-navy-50 border border-slate-line/50 text-slate-300">
+                      <span className="text-xs px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 font-medium">
                         {r.weather}
                       </span>
                     </td>

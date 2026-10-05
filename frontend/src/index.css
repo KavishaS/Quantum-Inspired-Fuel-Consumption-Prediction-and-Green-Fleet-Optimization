@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html, body, #root {
@@ -14,26 +14,47 @@ body {
   @apply bg-foam text-slate-ink font-sans antialiased;
 }
 
-/* Glassmorphism utilities */
+/* ── Glass panel — light frosted surface ────────────────────────── */
 .glass-panel {
-  @apply bg-navy-50/80 backdrop-blur-md border border-slate-line/30 shadow-card;
+  @apply bg-white/80 backdrop-blur-md border border-slate-line/60 shadow-card;
 }
 
-/* Hairline scrollbars */
+/* ── Hairline scrollbars (light) ────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #52525b; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 ::-webkit-scrollbar-track { background: transparent; }
 
 .tabular { font-variant-numeric: tabular-nums; }
 
-/* Route-line motif used behind KPI strips and section dividers */
+/* ── Route-line motif ────────────────────────────────────────────── */
 .route-rule {
-  background-image: repeating-linear-gradient(90deg, #27272a 0 6px, transparent 6px 12px);
+  background-image: repeating-linear-gradient(90deg, #e2e8f0 0 6px, transparent 6px 12px);
   height: 1px;
 }
 
 :focus-visible {
-  outline: 2px solid #38bdf8;
+  outline: 2px solid #0284c7;
   outline-offset: 2px;
+}
+
+/* ── Recharts tooltip light override ─────────────────────────────── */
+.recharts-default-tooltip {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+  color: #0f172a !important;
+}
+.recharts-tooltip-label {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+.recharts-tooltip-item {
+  color: #334155 !important;
+}
+
+/* ── Leaflet tile filter for light theme ─────────────────────────── */
+.leaflet-container {
+  font-family: 'Inter', sans-serif;
 }

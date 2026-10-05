@@ -99,10 +99,10 @@ export function FleetAnalytics() {
           <div className="h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={by_type} margin={{ top: 10, right: 10, left: -10, bottom: 20 }}>
-                <CartesianGrid stroke="#27272a" vertical={false} />
+                <CartesianGrid stroke="#e2e8f0" vertical={false} />
                 <XAxis
                   dataKey="vessel_type"
-                  tick={{ fontSize: 11, fill: "#a1a1aa" }}
+                  tick={{ fontSize: 11, fill: "#64748b" }}
                   interval={0}
                   angle={-15}
                   textAnchor="end"
@@ -111,14 +111,14 @@ export function FleetAnalytics() {
                 />
                 <YAxis
                   yAxisId="left"
-                  tick={{ fontSize: 11, fill: "#a1a1aa" }}
+                  tick={{ fontSize: 11, fill: "#64748b" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
                   yAxisId="right"
                   orientation="right"
-                  tick={{ fontSize: 11, fill: "#a1a1aa" }}
+                  tick={{ fontSize: 11, fill: "#64748b" }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={(v) => `${(v / 1e3).toFixed(0)}k`}
@@ -128,7 +128,7 @@ export function FleetAnalytics() {
                     n === "Vessel Count" ? `${v} ships` : `${fmtNum(v)} DWT`,
                     n,
                   ]}
-                  contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155" }}
+                  contentStyle={{ backgroundColor: "#ffffff", borderColor: "#e2e8f0", color: "#0f172a", borderRadius: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.06)" }}
                 />
                 <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: 12 }} />
                 <Bar
@@ -167,23 +167,23 @@ export function FleetAnalytics() {
                 layout="vertical"
                 margin={{ top: 10, right: 20, left: 35, bottom: 10 }}
               >
-                <CartesianGrid stroke="#27272a" horizontal={false} />
+                <CartesianGrid stroke="#e2e8f0" horizontal={false} />
                 <XAxis
                   type="number"
-                  tick={{ fontSize: 11, fill: "#a1a1aa" }}
+                  tick={{ fontSize: 11, fill: "#64748b" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
                   type="category"
                   dataKey="size_class"
-                  tick={{ fontSize: 11, fill: "#a1a1aa" }}
+                  tick={{ fontSize: 11, fill: "#64748b" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <Tooltip
                   formatter={(v: number) => [`${v} vessels`, "Count"]}
-                  contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155" }}
+                  contentStyle={{ backgroundColor: "#ffffff", borderColor: "#e2e8f0", color: "#0f172a", borderRadius: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.06)" }}
                 />
                 <Bar dataKey="count" fill="#0ea5e9" radius={[0, 4, 4, 0]} />
               </BarChart>
@@ -218,7 +218,7 @@ export function FleetAnalytics() {
                 </Pie>
                 <Tooltip
                   formatter={(v: number, n: string) => [`${v} ships (${fmtPct((v / (summary?.total_vessels || 1)) * 100)})`, n]}
-                  contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155" }}
+                  contentStyle={{ backgroundColor: "#ffffff", borderColor: "#e2e8f0", color: "#0f172a", borderRadius: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.06)" }}
                 />
                 <Legend verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: 11 }} />
               </PieChart>
@@ -234,12 +234,12 @@ export function FleetAnalytics() {
           <div className="h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={age_distribution} margin={{ top: 10, right: 10, left: -20, bottom: 10 }}>
-                <CartesianGrid stroke="#27272a" vertical={false} />
-                <XAxis dataKey="range" tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
+                <CartesianGrid stroke="#e2e8f0" vertical={false} />
+                <XAxis dataKey="range" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
                 <Tooltip
                   formatter={(v: number) => [`${v} vessels`, "Age Category"]}
-                  contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155" }}
+                  contentStyle={{ backgroundColor: "#ffffff", borderColor: "#e2e8f0", color: "#0f172a", borderRadius: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.06)" }}
                 />
                 <Bar dataKey="count" fill="#10b981" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -253,23 +253,23 @@ export function FleetAnalytics() {
           subtitle="Contractual scenario demand metrics"
         >
           <div className="flex flex-col gap-3 py-2 text-xs">
-            <div className="flex items-center justify-between p-2.5 bg-navy-50/50 rounded-lg border border-slate-line/50">
+            <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-line">
               <span className="text-slate-body">Total Port Contracts</span>
               <strong className="text-sm text-slate-ink">{contracts_summary.total_contracts}</strong>
             </div>
-            <div className="flex items-center justify-between p-2.5 bg-navy-50/50 rounded-lg border border-slate-line/50">
+            <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-line">
               <span className="text-slate-body">Active Engagements</span>
               <strong className="text-sm text-positive">{contracts_summary.active_contracts}</strong>
             </div>
-            <div className="flex items-center justify-between p-2.5 bg-navy-50/50 rounded-lg border border-slate-line/50">
+            <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-line">
               <span className="text-slate-body">Committed Cargo</span>
               <strong className="text-sm text-slate-ink">{fmtNum(contracts_summary.total_cargo_tonnes)} t</strong>
             </div>
-            <div className="flex items-center justify-between p-2.5 bg-navy-50/50 rounded-lg border border-slate-line/50">
+            <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-line">
               <span className="text-slate-body">Daily Penalty at Risk</span>
               <strong className="text-sm text-danger">{fmtUsd(contracts_summary.total_potential_penalty_per_day)}/d</strong>
             </div>
-            <div className="text-[11px] text-amber-400/90 font-mono mt-1">
+            <div className="text-[11px] text-amber-700 font-mono mt-1">
               Data Label: {provenance.contracts_type} (Commercial Scenarios)
             </div>
           </div>
