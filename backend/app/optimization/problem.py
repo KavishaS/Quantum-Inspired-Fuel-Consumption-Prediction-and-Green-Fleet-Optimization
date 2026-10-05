@@ -47,6 +47,7 @@ PENALTY_WEIGHTS = {
     "emission_cap": 25.0,
     "cost_cap": 25.0,
     "schedule": 8.0,
+    "contract_penalty": 15.0,
     "no_deployment": 100.0,
 }
 PENALTY_DEFAULT = 10.0
@@ -65,6 +66,8 @@ class Vessel:
     max_speed_kn: float
     allowed_fuels: List[str]
     available: bool = True
+    vessel_type: str = "Bulk Carrier"
+    size_class: str = ""
 
     @staticmethod
     def from_class(idx: int, cls: str, dwt: Optional[float] = None,
@@ -77,6 +80,8 @@ class Vessel:
             age_years=float(3 + (idx * 7) % 18),
             min_speed_kn=vc.min_speed_kn, max_speed_kn=vc.max_speed_kn,
             allowed_fuels=allowed or ["HFO", "MGO", "LNG"],
+            vessel_type=getattr(vc, "vessel_type", "Bulk Carrier"),
+            size_class=getattr(vc, "size_class", vc.name),
         )
 
 
@@ -92,6 +97,12 @@ class RouteDemand:
     current_speed_kn: float = 0.0
     weather: str = "MODERATE"
     port_hours: float = 36.0
+    contract_id: Optional[str] = None
+    customer: Optional[str] = None
+    cargo_type: str = "dry bulk"
+    penalty_per_day: float = 25000.0
+    laycan_start: Optional[str] = None
+    laycan_end: Optional[str] = None
 
 
 @dataclass
@@ -134,6 +145,11 @@ class Evaluation:
     n_violations: int
     feasible: bool
     assignments: List[Dict[str, Any]]
+    total_co2_tonnes: float = 0.0
+    total_sox_kg: float = 0.0
+    total_nox_kg: float = 0.0
+    total_delay_hours: float = 0.0
+    total_contract_penalty_usd: float = 0.0
 
     def summary(self) -> dict:
         d = {k: v for k, v in self.__dict__.items() if k != "assignments"}
@@ -205,6 +221,8 @@ class FleetProblem:
             return hit
 
         total_fuel = total_cost = total_life = total_ttw = 0.0
+        total_co2 = total_sox = total_nox = 0.0
+        total_contract_penalty = 0.0
         delivered = np.zeros(self.n_routes)
         late_hours = 0.0
         deployed = 0
@@ -212,14 +230,19 @@ class FleetProblem:
 
         for i, v in enumerate(self.vessels):
             r_gene = int(d[2 * i]) % self.route_card
+            v_type = getattr(v, "vessel_type", "Bulk Carrier")
+            s_class = getattr(v, "size_class", v.vessel_class.title())
             if r_gene == IDLE:
                 assignments.append({
                     "vessel_id": v.id, "vessel_name": v.name, "vessel_class": v.vessel_class,
+                    "vessel_type": v_type, "size_class": s_class,
                     "route": "IDLE", "status": "idle", "cargo_tonnes": 0.0, "speed_kn": 0.0,
                     "fuel_type": None, "fuel_tonnes": 0.0, "fuel_cost_usd": 0.0,
                     "total_cost_usd": 0.0, "lifecycle_co2e_tonnes": 0.0,
+                    "co2_tonnes": 0.0, "sox_kg": 0.0, "nox_kg": 0.0,
                     "voyage_hours": 0.0, "eta_hours": 0.0, "utilisation_pct": 0.0,
-                    "on_time": True,
+                    "on_time": True, "delay_hours": 0.0, "delay_days": 0.0,
+                    "contract_penalty_usd": 0.0, "contract_status": "IDLE",
                 })
                 continue
 
@@ -249,23 +272,38 @@ class FleetProblem:
             total_cost += r.total_cost_usd
             total_life += r.lifecycle_co2e_tonnes
             total_ttw += r.ttw_co2e_tonnes
+            total_co2 += r.co2_tonnes
+            total_sox += r.sox_kg
+            total_nox += r.nox_kg
             deployed += 1
             delay = max(0.0, r.voyage_hours - route.deadline_hours)
             late_hours += delay
+            delay_days = delay / 24.0
+            penalty_rate = getattr(route, "penalty_per_day", 25000.0)
+            contract_penalty = delay_days * penalty_rate
+            total_contract_penalty += contract_penalty
 
             assignments.append({
                 "vessel_id": v.id, "vessel_name": v.name, "vessel_class": v.vessel_class,
+                "vessel_type": v_type, "size_class": s_class,
                 "route": route.name, "status": "deployed",
                 "cargo_tonnes": round(cargo, 1), "speed_kn": round(speed, 2),
                 "fuel_type": fuel, "fuel_tonnes": round(r.fuel_tonnes, 2),
                 "fuel_cost_usd": round(r.fuel_cost_usd, 2),
                 "total_cost_usd": round(r.total_cost_usd, 2),
                 "lifecycle_co2e_tonnes": round(r.lifecycle_co2e_tonnes, 2),
+                "co2_tonnes": round(r.co2_tonnes, 2),
+                "sox_kg": round(r.sox_kg, 2),
+                "nox_kg": round(r.nox_kg, 2),
                 "engine_load_pct": round(r.engine_load_pct, 1),
                 "voyage_hours": round(r.voyage_hours, 1),
                 "eta_hours": round(r.voyage_hours, 1),
                 "utilisation_pct": round(100.0 * cargo / v.dwt, 1),
                 "on_time": delay <= self.econ.max_delay_hours,
+                "delay_hours": round(delay, 1),
+                "delay_days": round(delay_days, 2),
+                "contract_penalty_usd": round(contract_penalty, 2),
+                "contract_status": "On-Time" if delay <= 0.05 else f"Delayed {delay_days:.1f}d",
             })
 
         demand = np.array([r.cargo_demand_tonnes for r in self.routes], dtype=float)
@@ -290,6 +328,9 @@ class FleetProblem:
             viol["no_deployment"] = 1.0
 
         ref = self._reference()
+        if total_contract_penalty > 0:
+            viol["contract_penalty"] = total_contract_penalty / max(ref["cost"], 10000.0)
+
         w = self.weights
         f = (
             w.fuel * total_fuel / ref["fuel"]
@@ -316,6 +357,11 @@ class FleetProblem:
             n_violations=len(viol),
             feasible=len(viol) == 0,
             assignments=assignments,
+            total_co2_tonnes=total_co2,
+            total_sox_kg=total_sox,
+            total_nox_kg=total_nox,
+            total_delay_hours=late_hours,
+            total_contract_penalty_usd=total_contract_penalty,
         )
         if len(self._cache) < 200_000:
             self._cache[key] = ev

@@ -9,10 +9,11 @@ Smart India Hackathon — **PS-138: Quantum-Inspired Fuel Consumption Prediction
 ![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.14-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688)
 ![React](https://img.shields.io/badge/React-18%20%7C%20TypeScript-61DAFB)
-![Tests](https://img.shields.io/badge/Tests-72%20Passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-127%20Passing-brightgreen)
 ![ML Telemetry](https://img.shields.io/badge/Telemetry%20ML-R%C2%B2%200.997-orange)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)
 ![AIS Live](https://img.shields.io/badge/AIS%20Stream-21k+%20Vessels-cyan)
+![Emissions](https://img.shields.io/badge/Multi--Emissions-CO2%20%7C%20SOx%20%7C%20NOx-green)
 
 ---
 
@@ -238,34 +239,105 @@ The platform features built-in Role-Based Access Control (RBAC) with cryptograph
 
 ---
 
-## 10. Automated Testing
+## 10. Heterogeneous Fleet & Vessel Profiles
 
-Run the automated test suite covering physics, metaheuristics, telemetry ML, REST endpoints, and RBAC:
+Unlike legacy tools that treat vessel types and sizes interchangeably, GreenFleet Quantum explicitly segregates **Vessel Type** (naval architecture & cargo purpose) from **Size Class** (charterparty deadweight bracket):
+
+| Vessel Type | Size Classes Supported | Typical DWT Range | Main Engine (kW) | Benchmark Daily Fuel |
+|---|---|---|---|---|
+| **Bulk Carrier** | Handysize, Supramax, Panamax, Capesize | 35,000 – 180,000 DWT | 7,000 – 18,500 kW | 18 – 65 MT/day |
+| **Container Ship** | Feeder, Panamax Container, Post-Panamax | 20,000 – 140,000 DWT | 14,000 – 68,000 kW | 35 – 140 MT/day |
+| **Oil Tanker** | MR Tanker, Aframax, Suezmax | 50,000 – 160,000 DWT | 9,000 – 17,000 kW | 25 – 55 MT/day |
+| **General Cargo** | Multi-Purpose, Heavy Lift | 12,000 – 30,000 DWT | 5,500 – 9,500 kW | 12 – 24 MT/day |
+| **Ro-Ro** | Vehicle Carrier (PCTC), Ro-Pax | 15,000 – 45,000 DWT | 11,000 – 21,000 kW | 28 – 52 MT/day |
+
+Each vessel in the **Fleet Master** (`GET /api/fleet`) retains complete physical dimensions (Length, Beam, Draft), build vintage, IMO registration, authorized bunker fuel retrofits, and design specific fuel oil consumption (SFOC).
+
+---
+
+## 11. Centralized Multi-Emission Engine (CO2, SOx, NOx)
+
+Emissions are computed deterministically under IMO 4th GHG Study standards and MARPOL Annex VI regulations:
+
+$$\text{CO}_2\,(\text{tonnes}) = M_{\text{fuel}} \times C_f$$
+$$\text{SO}_x\,(\text{kg}) = M_{\text{fuel}} \times S_f$$
+$$\text{NO}_x\,(\text{kg}) = M_{\text{fuel}} \times N_f$$
+
+* **Fuel Emission Factors:**
+  * **HFO:** $C_f = 3.114$, $S_f = 10.0\text{ kg/t}$ (0.50% S global cap), $N_f = 80.0\text{ kg/t}$
+  * **MGO:** $C_f = 3.206$, $S_f = 2.0\text{ kg/t}$ (0.10% S ECA cap), $N_f = 50.0\text{ kg/t}$
+  * **LNG:** $C_f = 2.750$, $S_f = 0.05\text{ kg/t}$, $N_f = 15.0\text{ kg/t}$ (80% NOx reduction)
+  * **Methanol:** $C_f = 1.375$, $S_f = 0.0\text{ kg/t}$, $N_f = 18.0\text{ kg/t}$
+  * **Ammonia:** $C_f = 0.0$, $S_f = 0.0\text{ kg/t}$, $N_f = 12.0\text{ kg/t}$ (with SCR)
+  * **Hydrogen:** $C_f = 0.0$, $S_f = 0.0\text{ kg/t}$, $N_f = 5.0\text{ kg/t}$
+
+---
+
+## 12. Telemetry vs. Voyage Fuel Separation & Sanity Checking
+
+1. **High-Frequency Telemetry:** In ship sensor feeds (`Consumer_Total_MomentaryFuel`), fuel rate is measured instantaneously in **$\text{kg/s}$** ($0.50 \sim 0.65\text{ kg/s}$). Multiplying by $86.4$ gives equivalent daily fuel rate ($43 \sim 56\text{ MT/day}$).
+2. **Voyage Fuel Calculation Engine (`POST /api/voyages/calculate`):** Separates sensor rate from voyage integral:
+   $$M_{\text{voyage}} = \int_0^T \dot{m}_{\text{fuel}}(t)\,dt \approx \dot{m}_{\text{daily}} \times \left(\frac{D}{24 \cdot V}\right)$$
+3. **Hydrodynamic Sanity Checking:** Compares predicted daily fuel against realistic operational envelopes (e.g. Capesize: 50–80 MT/day; Panamax: 25–45 MT/day). Predictions within $\pm 25\%$ are classified `PLAUSIBLE`; borderline values receive `WARNING`; extreme physical anomalies are flagged `OUTLIER`.
+
+---
+
+## 13. Port Contracts & Commercial Demurrage Penalties
+
+Commercial contracts (`GET /api/contracts`) are labeled as **`SCENARIO`** data to distinguish charterparty simulations from real AIS and telemetry data:
+* **Laycan Window:** Arrival date brackets (`laycan_start`, `laycan_end`).
+* **Delay Penalty / Demurrage:** Incurred if transit duration exceeds contracted arrival hours:
+  $$\text{Delay Hours} = \max(0, T_{\text{voyage}} - T_{\text{contract}})$$
+  $$\text{Penalty USD} = \left(\frac{\text{Delay Hours}}{24}\right) \times \text{Penalty Rate ($/day)}$$
+* **Contract-Aware Quantum Optimization:** The QGA and QPSO fitness functions jointly weigh fuel expenditure, carbon costs, and contractual delay penalties ($f = w_{\text{cost}} \cdot \text{Cost} + w_{\text{emission}} \cdot \text{CO}_2 + w_{\text{penalty}} \cdot \text{Demurrage}$).
+
+---
+
+## 14. What-If Scenario Simulator
+
+The What-If Simulator (`POST /api/simulation/what-if`) compares a **Baseline Voyage** against an **Alternative Scenario**:
+* Adjust speed (slow steaming evaluation), fuel switching, hull routing, or adverse weather.
+* Calculates exact mathematical deltas: $\Delta\text{Fuel}$, $\Delta\text{Cost}$, $\Delta\text{CO}_2$, $\Delta\text{SO}_x$, $\Delta\text{NO}_x$, and $\Delta\text{Penalty}$.
+* Provides an executive trade-off verdict determining whether fuel and carbon savings offset demurrage penalties.
+
+---
+
+## 15. Automated Testing
+
+Run the automated test suite covering physics, metaheuristics, telemetry ML, REST endpoints, heterogeneous fleet models, port contracts, and multi-emission engines:
 
 ```bash
 cd backend
 python -m pytest tests/ -v
 ```
 
-**72 / 72 tests passing:**
+**127 / 127 tests passing (0 failures):**
 * `tests/test_core.py` (24 tests): Physics models, SFOC curves, QGA amplitude normalisation, QPSO multimodal escape, Pareto frontiers.
 * `tests/test_api.py` (42 tests): REST endpoints, scenario lifecycle, validation rejections, report generation, live weather APIs.
 * `tests/test_auth.py` (9 tests): Salted PBKDF2 hashing, JWT minting, role restrictions, and 403 Forbidden enforcement.
+* `tests/test_ais.py` (44 tests): AISStream WebSocket tracking, coordinate parsing, viewport bounds culling, and stale cleanup.
+* `tests/test_heterogeneous_fleet_contracts.py` (8 tests): Fleet master queries, multi-emission engine (CO2, SOx, NOx), voyage engine sanity validation, commercial contract CRUD & demurrage, and What-If simulation deltas.
 
 ---
 
-## 11. SIH PS-138 Deliverables Matrix
+## 16. SIH PS-138 Deliverables Matrix
 
 | Deliverable | Description | Status |
 |---|---|:---:|
 | **Working Web Platform** | Responsive React + TypeScript + Vite UI with dark maritime glassmorphism | ✅ **Complete** |
 | **Executive Dashboard** | Fleet KPIs, fuel burn, cost, emissions, CII ratings, and automated insights | ✅ **Complete** |
+| **Heterogeneous Fleet Master** | Segregated vessel types and size classes across 25 ships with naval dimensions | ✅ **Complete** |
+| **Port Contract Management** | Commercial laycan windows, cargo commitments, and demurrage penalty engine | ✅ **Complete** |
+| **What-If Scenario Simulator** | Dynamic baseline vs scenario simulator computing fuel, emission, and delay deltas | ✅ **Complete** |
+| **Fleet Analytics Dashboard** | Real-time aggregate charts for fleet composition, age profile, and fuel readiness | ✅ **Complete** |
+| **Multi-Emission Engine** | Tank-to-wake CO2, SOx, and NOx compliant with MARPOL Annex VI standards | ✅ **Complete** |
+| **Sanity Validation Engine** | Operational hydrodynamic bounding (e.g. 50–80 MT/day for Capesize) | ✅ **Complete** |
 | **Dual ML Predictor** | 6k synthetic model ($R^2 = 0.971$) + 37k real telemetry ensemble ($R^2 = 0.997$) | ✅ **Complete** |
-| **QGA & QPSO Engines** | Quantum rotation gates, Born rule sampling, and delta potential well tunnelling | ✅ **Complete** |
+| **Contract-Aware QGA/QPSO** | Joint optimization balancing bunker savings against contractual delay penalties | ✅ **Complete** |
 | **Classical Benchmarking** | Side-by-side comparison of QGA/QPSO vs GA, PSO, and Greedy baselines | ✅ **Complete** |
-| **Pareto Front Explorer** | Multi-objective trade-off analysis between total voyage cost and CO2e | ✅ **Complete** |
-| **Alternative Fuel Sandbox** | ROI, retrofit payback, and lifecycle emissions for HFO, MGO, LNG, Methanol, Ammonia, Hydrogen | ✅ **Complete** |
-| **Compliance Module** | Automated IMO CII rating (A–E), EU ETS carbon tax, and FuelEU Maritime penalties | ✅ **Complete** |
+| **Pareto Front Explorer** | Multi-objective trade-off analysis with full vessel dispatch and emission details | ✅ **Complete** |
+| **Alternative Fuel Sandbox** | Multi-emission (CO2/SOx/NOx) ROI and payback for HFO, MGO, LNG, Methanol, NH3, H2 | ✅ **Complete** |
+| **Compliance Module** | Automated IMO CII rating (A–E), EU ETS carbon tax, and MARPOL Annex VI | ✅ **Complete** |
 | **Live AIS Fleet Map** | 21,000+ live vessels with viewport culling, density controls, and ocean wave overlays | ✅ **Complete** |
 | **Free Live Marine Weather** | Open-Meteo wave heights, swell, ocean currents, and wind profiles | ✅ **Complete** |
 | **Role-Based Logins (RBAC)**| Fleet Director, Quantum Analyst, and ESG Auditor with functional permissions | ✅ **Complete** |
@@ -274,7 +346,7 @@ python -m pytest tests/ -v
 
 ---
 
-## 12. License & Attribution
+## 17. License & Attribution
 
 Developed for **Smart India Hackathon (SIH) — PS-138: Quantum-Inspired Fuel Consumption Prediction and Green Fleet Optimization**.
 

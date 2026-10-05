@@ -41,15 +41,47 @@ class Vessel(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     vessel_code: Mapped[str] = mapped_column(String(32), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(128))
-    vessel_class: Mapped[str] = mapped_column(String(32), index=True)
+    vessel_type: Mapped[str] = mapped_column(String(64), default="Bulk Carrier", index=True)
+    size_class: Mapped[str] = mapped_column(String(64), default="", index=True)
+    vessel_class: Mapped[str] = mapped_column(String(32), index=True)  # Retained for backward compatibility
+    imo: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
     dwt: Mapped[float] = mapped_column(Float)
     engine_kw: Mapped[float] = mapped_column(Float)
+    build_year: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    length_m: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    beam_m: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    draft_m: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     age_years: Mapped[float] = mapped_column(Float, default=5.0)
     min_speed_kn: Mapped[float] = mapped_column(Float, default=9.0)
     max_speed_kn: Mapped[float] = mapped_column(Float, default=15.5)
     allowed_fuels: Mapped[list] = mapped_column(JSON, default=list)
     status: Mapped[str] = mapped_column(String(32), default="available")
     available: Mapped[bool] = mapped_column(Boolean, default=True)
+    source: Mapped[str] = mapped_column(String(64), default="REAL_FLEET_REGISTRY")
+    source_date: Mapped[Optional[str]] = mapped_column(String(32), default="2024-01-01")
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=_now)
+
+
+class Contract(Base):
+    """
+    Port Contract representing a commercial cargo transport commitment.
+    Clearly marked with data_type='SCENARIO' as commercial scenario data.
+    """
+    __tablename__ = "contracts"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    contract_code: Mapped[str] = mapped_column(String(32), unique=True, index=True)
+    customer: Mapped[str] = mapped_column(String(128))
+    origin_port: Mapped[str] = mapped_column(String(64))
+    destination_port: Mapped[str] = mapped_column(String(64))
+    cargo_type: Mapped[str] = mapped_column(String(64))  # "Iron Ore", "Containers", "Crude Oil", etc.
+    cargo_quantity_tonnes: Mapped[float] = mapped_column(Float)
+    required_arrival_days: Mapped[float] = mapped_column(Float)
+    laycan_start: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    laycan_end: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    penalty_per_day: Mapped[float] = mapped_column(Float, default=25000.0)
+    priority: Mapped[str] = mapped_column(String(32), default="STANDARD")  # HIGH, STANDARD, FLEXIBLE
+    status: Mapped[str] = mapped_column(String(32), default="ACTIVE")      # ACTIVE, FULFILLED, DELAYED, CANCELLED
+    data_type: Mapped[str] = mapped_column(String(32), default="SCENARIO")
     created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=_now)
 
 
@@ -160,6 +192,9 @@ class Prediction(Base):
     physics_fuel_tonnes: Mapped[float] = mapped_column(Float)
     fuel_cost_usd: Mapped[float] = mapped_column(Float)
     lifecycle_co2e_tonnes: Mapped[float] = mapped_column(Float)
+    co2_tonnes: Mapped[Optional[float]] = mapped_column(Float, nullable=True, default=0.0)
+    sox_kg: Mapped[Optional[float]] = mapped_column(Float, nullable=True, default=0.0)
+    nox_kg: Mapped[Optional[float]] = mapped_column(Float, nullable=True, default=0.0)
     model_name: Mapped[str] = mapped_column(String(64), default="")
     created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=_now)
 

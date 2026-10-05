@@ -90,27 +90,122 @@ export function ParetoExplorer() {
             </div>
           </ChartCard>
 
-          <ChartCard title="Configuration Detail" subtitle="Click a point on the chart">
+          <ChartCard title="Configuration Detail" subtitle={selected ? `Solution: ${selected.id}` : "Click a point on the chart"}>
             {!selected ? (
               <p className="text-sm text-slate-body py-8 text-center">Select a solution to see its fleet configuration.</p>
             ) : (
               <div className="flex flex-col gap-2 text-sm">
+                <Row label="Solution ID" value={selected.id} />
                 <Row label="Cost weight" value={selected.cost_weight.toFixed(2)} />
                 <Row label="Emission weight" value={selected.emission_weight.toFixed(2)} />
                 <Row label="Cost" value={fmtUsd(selected.cost_usd)} />
                 <Row label="Lifecycle CO2e" value={`${fmtNum(selected.lifecycle_co2e_tonnes)} t`} />
+                {selected.total_co2_tonnes !== undefined && (
+                  <Row label="CO2 (Tank-to-Wake)" value={`${fmtNum(selected.total_co2_tonnes)} t`} />
+                )}
+                {selected.total_sox_kg !== undefined && (
+                  <Row label="SOx Emissions" value={`${fmtNum(selected.total_sox_kg)} kg`} />
+                )}
+                {selected.total_nox_kg !== undefined && (
+                  <Row label="NOx Emissions" value={`${fmtNum(selected.total_nox_kg)} kg`} />
+                )}
                 <Row label="Fuel" value={`${fmtNum(selected.fuel_tonnes)} t`} />
+                {selected.total_contract_penalty_usd !== undefined && (
+                  <Row
+                    label="Contract Delay Penalty"
+                    value={fmtUsd(selected.total_contract_penalty_usd)}
+                  />
+                )}
                 <Row label="Cargo fulfilment" value={fmtPct(selected.cargo_fulfilment_pct)} />
                 <Row label="Schedule reliability" value={fmtPct(selected.schedule_reliability_pct)} />
                 <Row label="Feasible" value={selected.feasible ? "Yes" : "No"} />
                 <Row label="Pareto-optimal" value={selected.pareto_optimal ? "Yes" : "No"} />
                 <div className="mt-2 border-t border-slate-line pt-2">
-                  <div className="text-xs text-slate-body mb-1">Deployed vessels: {selected.assignments.filter(a => a.status === "deployed").length}</div>
+                  <div className="text-xs text-slate-body">
+                    Deployed vessels: {selected.assignments.filter((a) => a.status === "deployed").length}
+                  </div>
                 </div>
               </div>
             )}
           </ChartCard>
         </div>
+      )}
+
+      {/* Deployed Fleet Assignments Detail Table for Selected Pareto Solution */}
+      {selected && (
+        <ChartCard
+          title={`Fleet Dispatch Schedule — Solution ${selected.id}`}
+          subtitle="Assigned vessels, routes, speeds, fuels, multi-emissions, and commercial contract status"
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[900px]">
+              <thead>
+                <tr className="text-left text-xs text-slate-body border-b border-slate-line">
+                  <th className="py-2 pr-3 font-medium">Vessel</th>
+                  <th className="py-2 pr-3 font-medium">Type</th>
+                  <th className="py-2 pr-3 font-medium">Size Class</th>
+                  <th className="py-2 pr-3 font-medium">Route</th>
+                  <th className="py-2 pr-3 font-medium text-right">Speed</th>
+                  <th className="py-2 pr-3 font-medium">Fuel</th>
+                  <th className="py-2 pr-3 font-medium text-right">Voyage Fuel (t)</th>
+                  <th className="py-2 pr-3 font-medium text-right">CO2 (t)</th>
+                  <th className="py-2 pr-3 font-medium text-right">SOx (kg)</th>
+                  <th className="py-2 pr-3 font-medium text-right">NOx (kg)</th>
+                  <th className="py-2 pr-3 font-medium">Contract Status</th>
+                  <th className="py-2 pr-3 font-medium text-right">Delay Penalty</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selected.assignments.map((a) => (
+                  <tr key={a.vessel_id} className="border-b border-slate-line/50 hover:bg-white/5 transition-colors">
+                    <td className="py-2 pr-3 font-medium text-slate-ink">{a.vessel_name}</td>
+                    <td className="py-2 pr-3 text-xs text-slate-300">
+                      {a.vessel_type || "Bulk Carrier"}
+                    </td>
+                    <td className="py-2 pr-3 text-xs text-slate-300">
+                      {a.size_class || a.vessel_class}
+                    </td>
+                    <td className="py-2 pr-3 text-xs text-slate-body">{a.route}</td>
+                    <td className="py-2 pr-3 tabular text-right">{a.speed_kn.toFixed(1)} kn</td>
+                    <td className="py-2 pr-3">
+                      <span className="text-xs px-2 py-0.5 rounded bg-signal/15 text-signal font-mono">
+                        {a.fuel_type || "HFO"}
+                      </span>
+                    </td>
+                    <td className="py-2 pr-3 tabular text-right font-medium text-slate-ink">
+                      {fmtNum(a.fuel_tonnes, 1)}
+                    </td>
+                    <td className="py-2 pr-3 tabular text-right">
+                      {a.co2_tonnes !== undefined ? fmtNum(a.co2_tonnes, 1) : fmtNum(a.lifecycle_co2e_tonnes, 1)}
+                    </td>
+                    <td className="py-2 pr-3 tabular text-right">
+                      {a.sox_kg !== undefined ? fmtNum(a.sox_kg, 1) : "—"}
+                    </td>
+                    <td className="py-2 pr-3 tabular text-right">
+                      {a.nox_kg !== undefined ? fmtNum(a.nox_kg, 1) : "—"}
+                    </td>
+                    <td className="py-2 pr-3">
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded font-medium ${
+                          a.contract_status === "ON_TIME"
+                            ? "bg-positive/20 text-positive"
+                            : a.contract_status === "DELAYED"
+                            ? "bg-danger/20 text-danger"
+                            : "bg-slate-500/20 text-slate-300"
+                        }`}
+                      >
+                        {a.contract_status || (a.on_time ? "ON_TIME" : "DELAYED")}
+                      </span>
+                    </td>
+                    <td className="py-2 pr-3 tabular text-right font-semibold text-danger">
+                      {a.penalty_usd ? fmtUsd(a.penalty_usd) : "$0"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </ChartCard>
       )}
     </div>
   );

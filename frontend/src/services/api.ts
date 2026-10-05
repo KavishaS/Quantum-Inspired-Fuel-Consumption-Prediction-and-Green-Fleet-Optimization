@@ -325,5 +325,87 @@ export const getMeApi = () => get<AuthUser>("/auth/me");
 
 export const listDemoUsersApi = () => get<{ users: DemoUserProfile[] }>("/auth/demo-users");
 
+// ------------------------------------------------------------- heterogeneous fleet & contracts
+
+export const listFleet = (params?: { vessel_type?: string; size_class?: string; fuel?: string; search?: string }) => {
+  const q = new URLSearchParams();
+  if (params?.vessel_type && params.vessel_type !== "ALL") q.set("vessel_type", params.vessel_type);
+  if (params?.size_class && params.size_class !== "ALL") q.set("size_class", params.size_class);
+  if (params?.fuel && params.fuel !== "ALL") q.set("fuel", params.fuel);
+  if (params?.search) q.set("search", params.search);
+  const qs = q.toString();
+  return get<{ count: number; vessels: Vessel[] }>(`/fleet${qs ? `?${qs}` : ""}`);
+};
+
+export const getFleetVessel = (id: number) => get<Vessel>(`/fleet/${id}`);
+
+export const getFleetMeta = () => get<import("@/types/api").FleetMetaResponse>("/fleet/meta");
+
+export const getFleetAnalytics = () => get<import("@/types/api").FleetAnalyticsResponse>("/fleet/analytics");
+
+export const listContracts = (status?: string) =>
+  get<{ count: number; contracts: import("@/types/api").Contract[]; data_type: string }>(status ? `/contracts?status=${status}` : "/contracts");
+
+export const getContract = (id: number) => get<import("@/types/api").Contract>(`/contracts/${id}`);
+
+export const createContract = (body: import("@/types/api").ContractCreateInput) =>
+  post<import("@/types/api").Contract>("/contracts", body);
+
+export const updateContract = (id: number, body: Partial<import("@/types/api").ContractCreateInput>) =>
+  put<import("@/types/api").Contract>(`/contracts/${id}`, body);
+
+export const deleteContract = (id: number) => del<{ deleted: number; contract_id: number }>(`/contracts/${id}`);
+
+// ------------------------------------------------------------- voyage engine & emissions
+
+export interface VoyageCalculateRequest {
+  vessel_id?: number;
+  vessel_class?: string;
+  speed_kn: number;
+  distance_nm: number;
+  fuel_type?: string;
+  weather?: string;
+  cargo_tonnes?: number;
+  contract_deadline_hours?: number;
+  penalty_per_day?: number;
+}
+
+export const calculateVoyage = (body: VoyageCalculateRequest) =>
+  post<import("@/types/api").VoyageCalculationResult>("/voyages/calculate", body);
+
+export const calculateEmissions = (body: { fuel_type: string; fuel_consumed_tonnes: number }) =>
+  post<import("@/types/api").EmissionsProfile>("/emissions/calculate", body);
+
+export interface WhatIfRequest {
+  baseline: {
+    vessel_id?: number;
+    vessel_class?: string;
+    route_name?: string;
+    distance_nm: number;
+    speed_kn: number;
+    fuel_type?: string;
+    weather?: string;
+    deadline_hours?: number;
+    penalty_per_day?: number;
+  };
+  scenario: {
+    vessel_id?: number;
+    vessel_class?: string;
+    route_name?: string;
+    distance_nm: number;
+    speed_kn: number;
+    fuel_type?: string;
+    weather?: string;
+    deadline_hours?: number;
+    penalty_per_day?: number;
+  };
+}
+
+export const simulateWhatIf = (body: WhatIfRequest) =>
+  post<import("@/types/api").WhatIfComparisonResponse>("/simulation/what-if", body);
+
+export const getWeatherImpact = (routeCode: string, speedKn = 14.0, vesselClass = "PANAMAX") =>
+  get<import("@/types/api").WeatherImpactResponse>(`/weather/impact?route_code=${encodeURIComponent(routeCode)}&speed_kn=${speedKn}&vessel_class=${vesselClass}`);
+
 
 

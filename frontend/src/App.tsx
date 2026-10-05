@@ -13,6 +13,9 @@ import { FleetData } from "@/pages/FleetData";
 import { ScenarioManager } from "@/pages/ScenarioManager";
 import { About } from "@/pages/About";
 import { LiveFleetMap } from "@/pages/LiveFleetMap";
+import { PortContracts } from "@/pages/PortContracts";
+import { FleetAnalytics } from "@/pages/FleetAnalytics";
+import { WhatIfSimulator } from "@/pages/WhatIfSimulator";
 
 export default function App() {
   return (
@@ -23,11 +26,14 @@ export default function App() {
             <Route index element={<Dashboard />} />
             <Route path="predictor" element={<FuelPredictor />} />
             <Route path="optimizer" element={<FleetOptimizer />} />
+            <Route path="what-if" element={<WhatIfSimulator />} />
             <Route path="sandbox" element={<FuelSandbox />} />
             <Route path="pareto" element={<ParetoExplorer />} />
             <Route path="benchmark" element={<Benchmarking />} />
             <Route path="compliance" element={<Compliance />} />
             <Route path="fleet" element={<FleetData />} />
+            <Route path="contracts" element={<PortContracts />} />
+            <Route path="analytics" element={<FleetAnalytics />} />
             <Route path="scenarios" element={<ScenarioManager />} />
             <Route path="live-map" element={<LiveFleetMap />} />
             <Route path="about" element={<About />} />

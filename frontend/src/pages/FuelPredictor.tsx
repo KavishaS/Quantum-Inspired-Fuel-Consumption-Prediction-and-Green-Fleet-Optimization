@@ -131,6 +131,108 @@ export function FuelPredictor() {
           )}
           {!loading && result && (
             <>
+              {/* Fuel Consumption Sanity Check Envelope */}
+              {(() => {
+                const CLASS_ENVELOPES: Record<string, [number, number]> = {
+                  HANDYSIZE: [12, 25],
+                  SUPRAMAX: [20, 35],
+                  PANAMAX: [25, 45],
+                  CAPESIZE: [50, 80],
+                };
+                const env = CLASS_ENVELOPES[form.vessel_class] || [20, 50];
+                const voyageDays = result.voyage_hours / 24;
+                const dailyFuelMt = voyageDays > 0 ? result.predicted_fuel_tonnes / voyageDays : 0;
+                const isIdeal = dailyFuelMt >= env[0] && dailyFuelMt <= env[1];
+                const isWarning = !isIdeal && dailyFuelMt >= env[0] * 0.7 && dailyFuelMt <= env[1] * 1.3;
+                const status = isIdeal ? "plausible" : isWarning ? "warning" : "outlier";
+
+                return (
+                  <div
+                    className={`rounded-xl p-4 border flex items-center justify-between gap-4 text-xs ${
+                      status === "plausible"
+                        ? "bg-positive/10 border-positive/30 text-positive"
+                        : status === "warning"
+                        ? "bg-amber-500/10 border-amber-500/30 text-amber-300"
+                        : "bg-danger/10 border-danger/30 text-danger"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-black/20 shrink-0">
+                        <Gauge className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
+                          <span>Sanity Check: {status.toUpperCase()}</span>
+                          <span className="text-[10px] px-1.5 py-0.2 rounded bg-black/30 font-mono">
+                            {dailyFuelMt.toFixed(1)} MT/day
+                          </span>
+                        </div>
+                        <p className="text-slate-300 mt-0.5 leading-relaxed">
+                          Daily rate of {dailyFuelMt.toFixed(1)} MT/day falls{" "}
+                          {status === "plausible"
+                            ? "within"
+                            : status === "warning"
+                            ? "near the boundaries of"
+                            : "outside"}{" "}
+                          the standard {form.vessel_class} operational hydrodynamic envelope ({env[0]}–{env[1]} MT/day).
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0 hidden sm:block">
+                      <div className="text-slate-400">Class Envelope</div>
+                      <div className="font-bold text-slate-100">{env[0]}–{env[1]} MT/day</div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Weather Impact Explainer Banner */}
+              {(() => {
+                const WEATHER_PENALTIES: Record<string, number> = {
+                  CALM: 0,
+                  MODERATE: 0.05,
+                  ROUGH: 0.15,
+                  SEVERE: 0.30,
+                };
+                const penaltyFactor = WEATHER_PENALTIES[form.weather || "CALM"] || 0;
+                const penaltyPct = penaltyFactor * 100;
+                const calmFuelTonnes = result.predicted_fuel_tonnes / (1 + penaltyFactor);
+                const extraFuelTonnes = result.predicted_fuel_tonnes - calmFuelTonnes;
+
+                return (
+                  <div className="glass-panel rounded-xl p-4 border border-slate-line/50 flex flex-col gap-2 bg-navy-900/40">
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs font-semibold text-slate-ink uppercase tracking-wide flex items-center gap-1.5">
+                        <span>Weather Impact Explainer</span>
+                        <span className="text-[10px] text-signal font-mono">
+                          {form.weather} ({form.wind_speed_kn} kn wind · {form.wave_height_m}m wave)
+                        </span>
+                      </div>
+                      <span className="text-xs text-slate-body">
+                        Baseline Calm vs Current Forecast
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 text-xs pt-1">
+                      <div className="p-2.5 rounded-lg bg-navy-50/50 border border-slate-line/50">
+                        <span className="text-slate-body block">Calm Sea Baseline</span>
+                        <strong className="text-sm text-slate-ink">{fmtNum(calmFuelTonnes, 1)} t</strong>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-navy-50/50 border border-slate-line/50">
+                        <span className="text-slate-body block">Weather Penalty</span>
+                        <strong className={`text-sm ${penaltyPct > 0 ? "text-amber-400" : "text-positive"}`}>
+                          +{penaltyPct.toFixed(1)}% (+{fmtNum(extraFuelTonnes, 1)} t)
+                        </strong>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-navy-50/50 border border-slate-line/50">
+                        <span className="text-slate-body block">Effective Fuel Spend</span>
+                        <strong className="text-sm text-slate-ink">{fmtNum(result.predicted_fuel_tonnes, 1)} t</strong>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <KpiCard label="Predicted Fuel" value={`${fmtNum(result.predicted_fuel_tonnes, 1)} t`} icon={Gauge} />
                 <KpiCard label="Fuel per NM" value={`${result.fuel_tonnes_per_nm.toFixed(4)} t`} icon={Gauge} />

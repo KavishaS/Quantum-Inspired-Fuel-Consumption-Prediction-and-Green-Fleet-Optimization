@@ -4,7 +4,7 @@ import clsx from "clsx";
 import {
   LayoutDashboard, Gauge, Compass, FlaskConical, GitBranch, BarChart3,
   ShieldCheck, Ship, FolderKanban, Info, Waves, CircleDot, MapPin,
-  Crown, Zap, ChevronDown
+  Crown, Zap, ChevronDown, FileText, PieChart, Sliders
 } from "lucide-react";
 
 import { getHealth } from "@/services/api";
@@ -15,11 +15,14 @@ const NAV = [
   { to: "/", label: "Executive Dashboard", icon: LayoutDashboard, end: true },
   { to: "/predictor", label: "Fuel Predictor", icon: Gauge },
   { to: "/optimizer", label: "Fleet Optimizer", icon: Compass },
+  { to: "/what-if", label: "What-If Simulator", icon: Sliders },
   { to: "/sandbox", label: "Alternative Fuel Sandbox", icon: FlaskConical },
   { to: "/pareto", label: "Pareto Explorer", icon: GitBranch },
   { to: "/benchmark", label: "Benchmarking", icon: BarChart3 },
   { to: "/compliance", label: "Compliance & Reports", icon: ShieldCheck },
-  { to: "/fleet", label: "Fleet Data", icon: Ship },
+  { to: "/fleet", label: "Fleet Master", icon: Ship },
+  { to: "/contracts", label: "Port Contracts", icon: FileText, badge: "SCENARIO" },
+  { to: "/analytics", label: "Fleet Analytics", icon: PieChart },
   { to: "/scenarios", label: "Scenario Manager", icon: FolderKanban },
   { to: "/live-map", label: "Live Fleet Map", icon: MapPin, badge: "LIVE" },
   { to: "/about", label: "About / Methodology", icon: Info },

@@ -268,12 +268,19 @@ class ScenarioCreate(BaseModel):
 
 
 class VesselCreate(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="ignore")
     vessel_code: str = Field(..., min_length=1, max_length=32)
     name: str = Field(..., min_length=1, max_length=128)
     vessel_class: str
+    vessel_type: str = "Bulk Carrier"
+    size_class: str = ""
+    imo: Optional[int] = None
     dwt: float = Field(..., gt=0, le=500_000)
     engine_kw: float = Field(..., gt=0, le=120_000)
+    build_year: Optional[int] = None
+    length_m: Optional[float] = None
+    beam_m: Optional[float] = None
+    draft_m: Optional[float] = None
     age_years: float = Field(5.0, ge=0, le=60)
     min_speed_kn: float = Field(9.0, gt=0, le=30)
     max_speed_kn: float = Field(15.5, gt=0, le=30)
@@ -286,6 +293,10 @@ class VesselCreate(BaseModel):
         if self.vessel_class.upper() not in CLASS_KEYS:
             raise ValueError(f"vessel_class must be one of {sorted(CLASS_KEYS)}")
         self.vessel_class = self.vessel_class.upper()
+        if not self.size_class:
+            self.size_class = self.vessel_class.title()
+        if not self.build_year and self.age_years:
+            self.build_year = int(2026 - self.age_years)
         if self.min_speed_kn >= self.max_speed_kn:
             raise ValueError("min_speed_kn must be below max_speed_kn.")
         bad = [f for f in self.allowed_fuels if f.upper() not in FUEL_KEYS]
@@ -293,6 +304,78 @@ class VesselCreate(BaseModel):
             raise ValueError(f"Unsupported fuel(s): {bad}")
         self.allowed_fuels = [f.upper() for f in self.allowed_fuels]
         return self
+
+
+class ContractCreate(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    contract_code: str = Field(..., min_length=2, max_length=32)
+    customer: str = Field(..., min_length=2, max_length=128)
+    origin_port: str = Field(..., min_length=2, max_length=64)
+    destination_port: str = Field(..., min_length=2, max_length=64)
+    cargo_type: str = Field("Dry Bulk", min_length=2, max_length=64)
+    cargo_quantity_tonnes: float = Field(..., gt=0)
+    required_arrival_days: float = Field(..., gt=0)
+    laycan_start: Optional[str] = None
+    laycan_end: Optional[str] = None
+    penalty_per_day: float = Field(25000.0, ge=0)
+    priority: str = Field("STANDARD", description="HIGH | STANDARD | FLEXIBLE")
+    status: str = Field("ACTIVE", description="ACTIVE | FULFILLED | DELAYED | CANCELLED")
+
+
+class ContractUpdate(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    customer: Optional[str] = None
+    origin_port: Optional[str] = None
+    destination_port: Optional[str] = None
+    cargo_type: Optional[str] = None
+    cargo_quantity_tonnes: Optional[float] = None
+    required_arrival_days: Optional[float] = None
+    laycan_start: Optional[str] = None
+    laycan_end: Optional[str] = None
+    penalty_per_day: Optional[float] = None
+    priority: Optional[str] = None
+    status: Optional[str] = None
+
+
+class VoyageCalculateRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    vessel_class: str = "PANAMAX"
+    distance_nm: float = Field(..., gt=0)
+    speed_kn: float = Field(..., gt=0, le=35)
+    fuel_type: str = "HFO"
+    cargo_tonnes: Optional[float] = None
+    dwt: Optional[float] = None
+    port_hours: float = Field(24.0, ge=0)
+    fuel_price_usd_per_tonne: Optional[float] = None
+    in_eca: bool = False
+    weather: str = "MODERATE"
+    wind_speed_kn: float = 12.0
+    wave_height_m: float = 1.5
+
+
+class EmissionsCalculateRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    fuel_tonnes: float = Field(0.0, ge=0)
+    fuel_consumed_tonnes: Optional[float] = None
+    fuel_type: str = "HFO"
+    in_eca: bool = False
+    engine_kw: Optional[float] = None
+    voyage_hours: Optional[float] = None
+    custom_limits: Optional[Dict[str, float]] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_fuel(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            if "fuel_tonnes" not in data and "fuel_consumed_tonnes" in data:
+                data["fuel_tonnes"] = data["fuel_consumed_tonnes"]
+        return data
+
+
+class WhatIfRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    baseline: Dict[str, Any]
+    scenario: Dict[str, Any]
 
 
 class ReportRequest(BaseModel):

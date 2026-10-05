@@ -103,36 +103,45 @@ export function FuelSandbox() {
             </ChartCard>
           </div>
 
-          <ChartCard title="ROI & Payback" subtitle={`Against incumbent ${data.incumbent}, ${data.horizon_years}-year horizon`}>
+          <ChartCard title="Multi-Emission & Financial Sandbox" subtitle={`Against incumbent ${data.incumbent}, ${data.horizon_years}-year horizon · CO2, SOx & NOx comparison`}>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm min-w-[820px]">
+              <table className="w-full text-sm min-w-[920px]">
                 <thead>
                   <tr className="text-left text-xs text-slate-body border-b border-slate-line">
-                    {["Fuel", "$/t", "Annual t", "Annual cost", "Lifecycle CO2e t", "vs incumbent", "Retrofit capex", "Payback", "Verdict"].map((h) => (
-                      <th key={h} className="py-2 pr-3 font-medium whitespace-nowrap">{h}</th>
+                    {["Fuel", "$/t", "Annual t", "Annual Cost", "CO2e (t)", "SOx (kg)", "NOx (kg)", "vs Incumbent", "Capex", "Payback", "Verdict"].map((h) => (
+                      <th key={h} className="py-2 pr-3 font-medium whitespace-nowrap text-right first:text-left">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {data.fuels.map((f) => (
-                    <tr key={f.fuel} className="border-b border-slate-line last:border-0">
-                      <td className="py-2 pr-3 font-medium text-slate-ink flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full" style={{ background: FUEL_COLORS[f.fuel] }} />
-                        {f.fuel}
-                      </td>
-                      <td className="py-2 pr-3 tabular text-right">{fmtNum(f.price_usd_per_tonne)}</td>
-                      <td className="py-2 pr-3 tabular text-right">{fmtNum(f.annual_fuel_tonnes)}</td>
-                      <td className="py-2 pr-3 tabular text-right">{fmtUsd(f.annual_opex_usd)}</td>
-                      <td className="py-2 pr-3 tabular text-right">{fmtNum(f.annual_lifecycle_co2e_tonnes)}</td>
-                      <td className={`py-2 pr-3 tabular text-right font-medium ${
-                        Math.abs(f.emission_change_pct) < 0.05 ? "text-slate-body" : f.emission_change_pct < 0 ? "text-positive" : "text-danger"}`}>
-                        {fmtPct(f.emission_change_pct, 1, true)}
-                      </td>
-                      <td className="py-2 pr-3 tabular text-right">{fmtUsd(f.retrofit_capex_usd)}</td>
-                      <td className="py-2 pr-3 tabular text-right">{f.payback_years !== null ? `${f.payback_years.toFixed(1)}y` : "—"}</td>
-                      <td className="py-2 pr-3 text-slate-body whitespace-nowrap">{f.verdict}</td>
-                    </tr>
-                  ))}
+                  {data.fuels.map((f) => {
+                    const SOX_FACTORS: Record<string, number> = { HFO: 10.0, MGO: 2.0, LNG: 0.05, METHANOL: 0.0, AMMONIA: 0.0, HYDROGEN: 0.0 };
+                    const NOX_FACTORS: Record<string, number> = { HFO: 80.0, MGO: 50.0, LNG: 15.0, METHANOL: 18.0, AMMONIA: 12.0, HYDROGEN: 5.0 };
+                    const annualSoxKg = f.annual_fuel_tonnes * (SOX_FACTORS[f.fuel] ?? 5.0);
+                    const annualNoxKg = f.annual_fuel_tonnes * (NOX_FACTORS[f.fuel] ?? 40.0);
+
+                    return (
+                      <tr key={f.fuel} className="border-b border-slate-line last:border-0">
+                        <td className="py-2 pr-3 font-medium text-slate-ink flex items-center gap-1.5">
+                          <span className="h-2 w-2 rounded-full" style={{ background: FUEL_COLORS[f.fuel] }} />
+                          {f.fuel}
+                        </td>
+                        <td className="py-2 pr-3 tabular text-right">{fmtNum(f.price_usd_per_tonne)}</td>
+                        <td className="py-2 pr-3 tabular text-right">{fmtNum(f.annual_fuel_tonnes)}</td>
+                        <td className="py-2 pr-3 tabular text-right">{fmtUsd(f.annual_opex_usd)}</td>
+                        <td className="py-2 pr-3 tabular text-right">{fmtNum(f.annual_lifecycle_co2e_tonnes)}</td>
+                        <td className="py-2 pr-3 tabular text-right text-xs text-slate-300">{fmtNum(annualSoxKg)}</td>
+                        <td className="py-2 pr-3 tabular text-right text-xs text-slate-300">{fmtNum(annualNoxKg)}</td>
+                        <td className={`py-2 pr-3 tabular text-right font-medium ${
+                          Math.abs(f.emission_change_pct) < 0.05 ? "text-slate-body" : f.emission_change_pct < 0 ? "text-positive" : "text-danger"}`}>
+                          {fmtPct(f.emission_change_pct, 1, true)}
+                        </td>
+                        <td className="py-2 pr-3 tabular text-right">{fmtUsd(f.retrofit_capex_usd)}</td>
+                        <td className="py-2 pr-3 tabular text-right">{f.payback_years !== null ? `${f.payback_years.toFixed(1)}y` : "—"}</td>
+                        <td className="py-2 pr-3 text-slate-body whitespace-nowrap">{f.verdict}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

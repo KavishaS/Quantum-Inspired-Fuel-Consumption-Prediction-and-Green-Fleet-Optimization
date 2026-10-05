@@ -92,9 +92,37 @@ class VoyageResult:
     engine_load_pct: float
     sfoc_g_per_kwh: float
     avg_power_kw: float
+    co2_tonnes: float = 0.0
+    sox_kg: float = 0.0
+    nox_kg: float = 0.0
+    predicted_daily_fuel_mt: float = 0.0
+    sanity_status: str = "Plausible"
+    sanity_range: str = "50-80 MT/day"
 
     def to_dict(self) -> dict:
-        return {k: round(v, 4) for k, v in self.__dict__.items()}
+        return {k: (round(v, 4) if isinstance(v, float) else v) for k, v in self.__dict__.items()}
+
+
+def get_vessel_sanity_range(vessel_class: str) -> tuple[float, float]:
+    """Empirical operating reference envelopes for fuel sanity checking."""
+    ranges = {
+        "CAPESIZE": (45.0, 85.0),
+        "POST_PANAMAX": (55.0, 95.0),
+        "SUEZMAX": (45.0, 80.0),
+        "PANAMAX": (25.0, 55.0),
+        "CONTAINER_PANAMAX": (35.0, 65.0),
+        "AFRAMAX": (30.0, 60.0),
+        "SUPRAMAX": (18.0, 38.0),
+        "MR_TANKER": (18.0, 40.0),
+        "GENERAL_CARGO_LARGE": (15.0, 35.0),
+        "RORO_LARGE": (25.0, 50.0),
+        "HANDYSIZE": (10.0, 28.0),
+        "FEEDER": (12.0, 30.0),
+        "TANKER_HANDYSIZE": (12.0, 30.0),
+        "GENERAL_CARGO_SMALL": (8.0, 22.0),
+        "RORO_COMPACT": (14.0, 32.0),
+    }
+    return ranges.get(vessel_class.upper(), (30.0, 70.0))
 
 
 def compute_voyage(
@@ -156,6 +184,22 @@ def compute_voyage(
     # EU ETS-style schemes price tank-to-wake emissions.
     carbon_cost = ttw * carbon_price_usd_per_tonne
 
+    # Multi-emissions: CO2 (tonnes), SOx (kg), NOx (kg)
+    co2_tonnes = ttw
+    sox_kg = fuel_tonnes * getattr(fuel, "sox_kg_per_tonne", 10.0)
+    nox_kg = fuel_tonnes * getattr(fuel, "nox_kg_per_tonne", 78.0)
+
+    # Sanity checking against empirical daily burn rates
+    sea_days = sea_hours / 24.0
+    daily_fuel = fuel_tonnes / max(sea_days, 1e-4) if sea_days > 0 else 0.0
+    low_ref, high_ref = get_vessel_sanity_range(vessel_class)
+    if daily_fuel < low_ref * 0.65:
+        sanity_status = "Warning: Low"
+    elif daily_fuel > high_ref * 1.35:
+        sanity_status = "Warning: High"
+    else:
+        sanity_status = "Plausible"
+
     return VoyageResult(
         fuel_tonnes=fuel_tonnes,
         fuel_tonnes_per_nm=fuel_tonnes / max(distance_nm, 1e-6),
@@ -170,4 +214,10 @@ def compute_voyage(
         engine_load_pct=lf * 100.0,
         sfoc_g_per_kwh=sfoc,
         avg_power_kw=total_kw,
+        co2_tonnes=co2_tonnes,
+        sox_kg=sox_kg,
+        nox_kg=nox_kg,
+        predicted_daily_fuel_mt=round(daily_fuel, 2),
+        sanity_status=sanity_status,
+        sanity_range=f"{low_ref:.0f}–{high_ref:.0f} MT/day",
     )

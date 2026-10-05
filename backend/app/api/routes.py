@@ -21,26 +21,31 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from ..database.models import (
-    BenchmarkResult, CargoDemand, FuelPrice, FuelType, OptimizationResult,
+    BenchmarkResult, CargoDemand, Contract, FuelPrice, FuelType, OptimizationResult,
     OptimizationRun, Prediction, Report, Route, Scenario, Vessel)
 from ..database.session import SessionLocal, get_db
 from ..ml.predictor import PREDICTOR, train
 from ..optimization.engine import benchmark as run_benchmark
 from ..optimization.engine import pareto_front, solve
 from ..schemas.models import (
-    BenchmarkRequest, ComplianceRequest, FuelSandboxRequest, OptimizeRequest,
-    ParetoRequest, PredictionRequest, ReportRequest, ScenarioCreate,
-    ScenarioPayload, TelemetryPredictionRequest, VesselCreate)
+    BenchmarkRequest, ComplianceRequest, ContractCreate, ContractUpdate,
+    EmissionsCalculateRequest, FuelSandboxRequest, OptimizeRequest, ParetoRequest,
+    PredictionRequest, ReportRequest, ScenarioCreate, ScenarioPayload,
+    TelemetryPredictionRequest, VesselCreate, VoyageCalculateRequest, WhatIfRequest)
 from ..services import compliance as compliance_svc
 from ..services.dashboard import build_dashboard
-from ..services.domain import FUELS, VESSEL_CLASSES
+from ..services.domain import FUELS, VESSEL_CLASSES, VESSEL_TYPES, VESSEL_TYPE_SIZE_CLASSES
+from ..services.emissions import calculate_emissions
+from ..services.fleet_analytics import compute_fleet_analytics
 from ..services.fuel_sandbox import compare_fuels
-from ..services.physics import compute_voyage
+from ..services.physics import compute_voyage, get_vessel_sanity_range
 from ..services.reporting import generate_report
 from ..services.scenarios import (
     current_fuel_prices, default_payload, problem_from_payload)
+from ..services.voyage_engine import calculate_voyage_plan
 from ..services.weather import (
     fetch_live_marine_weather, fetch_route_weather_profile)
+from ..services.what_if import SimulationCondition, simulate_what_if
 from ..services.auth import require_roles_or_demo
 
 log = logging.getLogger("greenfleet.api")
@@ -102,17 +107,105 @@ def list_classes() -> dict:
     return {"classes": [vc.__dict__ for vc in VESSEL_CLASSES.values()]}
 
 
-# ------------------------------------------------------------------ vessels
+# ------------------------------------------------------------------ vessels & fleet master
+
+def _format_vessel(v: Vessel) -> dict:
+    vc = VESSEL_CLASSES.get(v.vessel_class)
+    v_type = getattr(v, "vessel_type", None) or getattr(vc, "vessel_type", "Bulk Carrier")
+    s_class = getattr(v, "size_class", None) or getattr(vc, "size_class", v.vessel_class.title())
+    low_ref, high_ref = get_vessel_sanity_range(v.vessel_class)
+    return {
+        "id": v.id,
+        "vessel_code": v.vessel_code,
+        "name": v.name,
+        "vessel_type": v_type,
+        "size_class": s_class,
+        "vessel_class": v.vessel_class,
+        "imo": v.imo,
+        "dwt": v.dwt,
+        "engine_kw": v.engine_kw,
+        "build_year": v.build_year or int(2026 - v.age_years),
+        "length_m": v.length_m,
+        "beam_m": v.beam_m,
+        "draft_m": v.draft_m,
+        "age_years": v.age_years,
+        "min_speed_kn": v.min_speed_kn,
+        "max_speed_kn": v.max_speed_kn,
+        "allowed_fuels": v.allowed_fuels,
+        "status": v.status,
+        "available": v.available,
+        "source": getattr(v, "source", "REAL_FLEET_REGISTRY"),
+        "source_date": getattr(v, "source_date", "2024-01-01"),
+        "reference_daily_fuel_range": f"{low_ref:.0f}–{high_ref:.0f} MT/day",
+    }
+
 
 @router.get("/vessels", tags=["fleet"])
-def list_vessels(db: Session = Depends(get_db), limit: int = Query(200, ge=1, le=1000)) -> dict:
-    rows = db.scalars(select(Vessel).limit(limit)).all()
-    return {"count": len(rows), "vessels": [{
-        "id": v.id, "vessel_code": v.vessel_code, "name": v.name,
-        "vessel_class": v.vessel_class, "dwt": v.dwt, "engine_kw": v.engine_kw,
-        "age_years": v.age_years, "min_speed_kn": v.min_speed_kn,
-        "max_speed_kn": v.max_speed_kn, "allowed_fuels": v.allowed_fuels,
-        "status": v.status, "available": v.available} for v in rows]}
+def list_vessels(
+    db: Session = Depends(get_db),
+    limit: int = Query(200, ge=1, le=1000),
+    vessel_type: Optional[str] = Query(None),
+    size_class: Optional[str] = Query(None),
+    fuel_type: Optional[str] = Query(None),
+    min_dwt: Optional[float] = Query(None),
+    max_dwt: Optional[float] = Query(None),
+) -> dict:
+    query = select(Vessel)
+    if vessel_type:
+        query = query.where(Vessel.vessel_type == vessel_type)
+    if size_class:
+        query = query.where(Vessel.size_class == size_class)
+    if min_dwt is not None:
+        query = query.where(Vessel.dwt >= min_dwt)
+    if max_dwt is not None:
+        query = query.where(Vessel.dwt <= max_dwt)
+    
+    rows = db.scalars(query.limit(limit)).all()
+    if fuel_type:
+        f_upper = fuel_type.upper()
+        rows = [v for v in rows if f_upper in (v.allowed_fuels or [])]
+
+    return {"count": len(rows), "vessels": [_format_vessel(v) for v in rows]}
+
+
+@router.get("/fleet", tags=["fleet"])
+def list_fleet(
+    db: Session = Depends(get_db),
+    limit: int = Query(200, ge=1, le=1000),
+    vessel_type: Optional[str] = Query(None),
+    size_class: Optional[str] = Query(None),
+    fuel_type: Optional[str] = Query(None),
+    min_dwt: Optional[float] = Query(None),
+    max_dwt: Optional[float] = Query(None),
+) -> dict:
+    return list_vessels(db, limit, vessel_type, size_class, fuel_type, min_dwt, max_dwt)
+
+
+@router.get("/fleet/meta", tags=["fleet"])
+def fleet_metadata() -> dict:
+    return {
+        "vessel_types": VESSEL_TYPES,
+        "size_classes_by_type": VESSEL_TYPE_SIZE_CLASSES,
+        "fuels": list(FUELS.keys()),
+    }
+
+
+@router.get("/fleet/analytics", tags=["fleet"])
+def fleet_analytics(db: Session = Depends(get_db)) -> dict:
+    return compute_fleet_analytics(db)
+
+
+@router.get("/vessels/{vessel_id}", tags=["fleet"])
+def get_vessel(vessel_id: int, db: Session = Depends(get_db)) -> dict:
+    v = db.get(Vessel, vessel_id)
+    if not v:
+        raise HTTPException(404, f"Vessel {vessel_id} not found.")
+    return _format_vessel(v)
+
+
+@router.get("/fleet/{vessel_id}", tags=["fleet"])
+def get_fleet_vessel(vessel_id: int, db: Session = Depends(get_db)) -> dict:
+    return get_vessel(vessel_id, db)
 
 
 @router.post("/vessels", tags=["fleet"], status_code=201)
@@ -144,6 +237,222 @@ def delete_vessel(vessel_id: int, db: Session = Depends(get_db)) -> dict:
     db.delete(v)
     db.commit()
     return {"deleted": vessel_id}
+
+
+# ------------------------------------------------------------------ port contracts
+
+def _format_contract(c: Contract) -> dict:
+    return {
+        "id": c.id,
+        "contract_code": c.contract_code,
+        "customer": c.customer,
+        "origin_port": c.origin_port,
+        "destination_port": c.destination_port,
+        "cargo_type": c.cargo_type,
+        "cargo_quantity_tonnes": c.cargo_quantity_tonnes,
+        "required_arrival_days": c.required_arrival_days,
+        "laycan_start": c.laycan_start,
+        "laycan_end": c.laycan_end,
+        "penalty_per_day": c.penalty_per_day,
+        "priority": c.priority,
+        "status": c.status,
+        "data_type": getattr(c, "data_type", "SCENARIO"),
+        "created_at": c.created_at.isoformat() if c.created_at else None,
+    }
+
+
+@router.get("/contracts", tags=["contracts"])
+def list_contracts(
+    db: Session = Depends(get_db),
+    status: Optional[str] = Query(None),
+    priority: Optional[str] = Query(None),
+) -> dict:
+    query = select(Contract)
+    if status:
+        query = query.where(Contract.status == status.upper())
+    if priority:
+        query = query.where(Contract.priority == priority.upper())
+    rows = db.scalars(query.order_by(Contract.id)).all()
+    return {
+        "count": len(rows),
+        "contracts": [_format_contract(c) for c in rows],
+        "data_type": "SCENARIO",
+        "notice": "Port contracts represent commercial transportation requirements (SCENARIO data).",
+    }
+
+
+@router.get("/contracts/{contract_id}", tags=["contracts"])
+def get_contract(contract_id: int, db: Session = Depends(get_db)) -> dict:
+    c = db.get(Contract, contract_id)
+    if not c:
+        raise HTTPException(404, f"Contract {contract_id} not found.")
+    return _format_contract(c)
+
+
+@router.post("/contracts", tags=["contracts"], status_code=201)
+def create_contract(body: ContractCreate, db: Session = Depends(get_db)) -> dict:
+    if db.scalar(select(Contract).where(Contract.contract_code == body.contract_code)):
+        raise HTTPException(409, f"Contract code {body.contract_code} already exists.")
+    c = Contract(**body.model_dump(), data_type="SCENARIO")
+    db.add(c)
+    db.commit()
+    return {"id": c.id, "contract_code": c.contract_code}
+
+
+@router.put("/contracts/{contract_id}", tags=["contracts"])
+def update_contract(contract_id: int, body: ContractUpdate, db: Session = Depends(get_db)) -> dict:
+    c = db.get(Contract, contract_id)
+    if not c:
+        raise HTTPException(404, f"Contract {contract_id} not found.")
+    for k, val in body.model_dump(exclude_unset=True).items():
+        setattr(c, k, val)
+    db.commit()
+    return {"id": c.id, "updated": True}
+
+
+@router.delete("/contracts/{contract_id}", tags=["contracts"])
+def delete_contract(contract_id: int, db: Session = Depends(get_db)) -> dict:
+    c = db.get(Contract, contract_id)
+    if not c:
+        raise HTTPException(404, f"Contract {contract_id} not found.")
+    db.delete(c)
+    db.commit()
+    return {"deleted": contract_id}
+
+
+# ------------------------------------------------------------------ voyage calculation
+
+@router.post("/voyages/calculate", tags=["voyages"])
+def calculate_voyage_endpoint(body: VoyageCalculateRequest) -> dict:
+    """Calculates voyage fuel, sailing duration, multi-emissions, and sanity validation."""
+    res = calculate_voyage_plan(
+        vessel_class=body.vessel_class,
+        distance_nm=body.distance_nm,
+        speed_kn=body.speed_kn,
+        fuel_type=body.fuel_type,
+        cargo_tonnes=body.cargo_tonnes,
+        dwt=body.dwt,
+        port_hours=body.port_hours,
+        fuel_price_usd_per_tonne=body.fuel_price_usd_per_tonne,
+        in_eca=body.in_eca,
+        weather=body.weather,
+        wind_speed_kn=body.wind_speed_kn,
+        wave_height_m=body.wave_height_m,
+    )
+    return res.to_dict()
+
+
+# ------------------------------------------------------------------ multi-emissions
+
+@router.post("/emissions/calculate", tags=["emissions"])
+def calculate_emissions_endpoint(body: EmissionsCalculateRequest) -> dict:
+    """Calculates CO2, SOx, and NOx according to MARPOL Annex VI and IMO 4th GHG Study."""
+    res = calculate_emissions(
+        fuel_tonnes=body.fuel_tonnes,
+        fuel_type=body.fuel_type,
+        in_eca=body.in_eca,
+        engine_kw=body.engine_kw,
+        voyage_hours=body.voyage_hours,
+        custom_limits=body.custom_limits,
+    )
+    return res.to_dict()
+
+
+# ------------------------------------------------------------------ what-if simulator
+
+@router.post("/simulation/what-if", tags=["simulation"])
+def simulation_what_if_endpoint(body: WhatIfRequest, db: Session = Depends(get_db)) -> dict:
+    """Compares baseline vs scenario operational tuning across fuel, cost, emissions, and delays."""
+    def _parse_condition(d: Dict[str, Any]) -> SimulationCondition:
+        v_id = d.get("vessel_id")
+        v = db.get(Vessel, int(v_id)) if v_id and str(v_id).isdigit() else None
+        v_class = d.get("vessel_class") or (v.vessel_class if v else "PANAMAX")
+        v_name = d.get("vessel_name") or (v.name if v else "MV Green Fleet")
+        v_type = d.get("vessel_type") or (getattr(v, "vessel_type", None) or "Bulk Carrier")
+        v_size = d.get("size_class") or (getattr(v, "size_class", None) or "Panamax")
+        dwt = d.get("dwt") or (float(v.dwt) if v and v.dwt else None)
+        deadline = d.get("contract_deadline_hours") or d.get("deadline_hours")
+        penalty = d.get("contract_penalty_per_day") or d.get("penalty_per_day") or 25000.0
+
+        return SimulationCondition(
+            vessel_class=str(v_class),
+            vessel_name=str(v_name),
+            vessel_type=str(v_type),
+            size_class=str(v_size),
+            speed_kn=float(d.get("speed_kn", 13.0)),
+            fuel_type=str(d.get("fuel_type", "HFO")),
+            distance_nm=float(d.get("distance_nm", 5000.0)),
+            cargo_tonnes=float(d["cargo_tonnes"]) if d.get("cargo_tonnes") is not None else None,
+            dwt=float(dwt) if dwt is not None else None,
+            weather=str(d.get("weather", "MODERATE")),
+            wind_speed_kn=float(d.get("wind_speed_kn", 14.0)),
+            wave_height_m=float(d.get("wave_height_m", 1.8)),
+            port_hours=float(d.get("port_hours", 36.0)),
+            fuel_price_usd_per_tonne=float(d["fuel_price_usd_per_tonne"]) if d.get("fuel_price_usd_per_tonne") is not None else None,
+            carbon_price_usd_per_tonne=float(d.get("carbon_price_usd_per_tonne", 85.0)),
+            contract_deadline_hours=float(deadline) if deadline is not None else None,
+            contract_penalty_per_day=float(penalty),
+            contract_id=str(d["contract_id"]) if d.get("contract_id") else None,
+        )
+
+    b_cond = _parse_condition(body.baseline)
+    s_cond = _parse_condition(body.scenario)
+    res = simulate_what_if(b_cond, s_cond)
+    return res.to_dict()
+
+
+# ------------------------------------------------------------------ weather impact
+
+@router.get("/weather/impact", tags=["weather"])
+def weather_impact_comparison(
+    vessel_class: str = Query("PANAMAX"),
+    speed_kn: float = Query(13.0, gt=0, le=30),
+    fuel_type: str = Query("HFO"),
+    wind_speed_kn: float = Query(22.0, ge=0),
+    wave_height_m: float = Query(3.0, ge=0),
+    current_speed_kn: float = Query(0.0),
+    weather: str = Query("ROUGH"),
+) -> dict:
+    """Compares normal calm sea conditions vs current/forecast weather with actual percentage change."""
+    vc = VESSEL_CLASSES.get(vessel_class.upper(), VESSEL_CLASSES["PANAMAX"])
+    norm = compute_voyage(
+        vessel_class=vc.key, dwt=float(vc.typical_dwt), engine_kw=float(vc.engine_kw),
+        vessel_age_years=5.0, speed_kn=speed_kn, cargo_tonnes=float(vc.typical_dwt) * 0.85,
+        distance_nm=1000.0, fuel_key=fuel_type, wind_speed_kn=5.0, wave_height_m=0.5,
+        current_speed_kn=0.0, weather="CALM",
+    )
+    curr = compute_voyage(
+        vessel_class=vc.key, dwt=float(vc.typical_dwt), engine_kw=float(vc.engine_kw),
+        vessel_age_years=5.0, speed_kn=speed_kn, cargo_tonnes=float(vc.typical_dwt) * 0.85,
+        distance_nm=1000.0, fuel_key=fuel_type, wind_speed_kn=wind_speed_kn,
+        wave_height_m=wave_height_m, current_speed_kn=current_speed_kn, weather=weather,
+    )
+    s_days = (1000.0 / max(speed_kn, 0.5)) / 24.0
+    norm_rate = norm.fuel_tonnes / max(s_days, 1e-4)
+    curr_rate = curr.fuel_tonnes / max(s_days, 1e-4)
+    pct_change = ((curr_rate - norm_rate) / norm_rate * 100.0) if norm_rate > 0 else 0.0
+
+    return {
+        "vessel_class": vc.name,
+        "speed_kn": speed_kn,
+        "fuel_type": fuel_type,
+        "normal_conditions": {
+            "weather": "CALM",
+            "wind_speed_kn": 5.0,
+            "wave_height_m": 0.5,
+            "daily_fuel_mt_per_day": round(norm_rate, 2),
+        },
+        "forecast_conditions": {
+            "weather": weather,
+            "wind_speed_kn": wind_speed_kn,
+            "wave_height_m": wave_height_m,
+            "current_speed_kn": current_speed_kn,
+            "daily_fuel_mt_per_day": round(curr_rate, 2),
+        },
+        "fuel_consumption_change_pct": round(pct_change, 2),
+        "explanation": f"Environmental drag from {wave_height_m}m waves and {wind_speed_kn} kn wind increases propulsion load, resulting in a {pct_change:+.1f}% change in daily fuel consumption.",
+        "data_provenance": "REAL (Calculated Hydrodynamic Resistance Model)",
+    }
 
 
 @router.get("/routes", tags=["fleet"])
